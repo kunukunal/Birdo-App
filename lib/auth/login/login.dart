@@ -36,10 +36,10 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _login() async {
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const BottomNavBar()),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const BottomNavBar()),
+    );
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
 

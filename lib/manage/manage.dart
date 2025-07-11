@@ -141,16 +141,17 @@ class ScheduleInputView extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: isToday
-            ? Colors.blue.withOpacity(0.2)
+            ? const Color(0xFF34BB91).withOpacity(0.2)
             : (isUploaded
-                ? Colors.green.withOpacity(0.1)
+                ? const Color(0xFF34BB91).withOpacity(0.1)
                 : Colors.grey.withOpacity(0.1)),
         child: Icon(
           isToday
               ? Icons.today
               : (isUploaded ? Icons.upload_file : Icons.music_note),
-          color:
-              isToday ? Colors.blue : (isUploaded ? Colors.green : Colors.grey),
+          color: isToday
+              ? const Color(0xFF34BB91)
+              : (isUploaded ? const Color(0xFF34BB91) : Colors.grey),
           size: 20,
         ),
       ),
@@ -161,7 +162,7 @@ class ScheduleInputView extends StatelessWidget {
             _formatDateDisplay(schedule.date),
             style: TextStyle(
               fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-              color: isToday ? Colors.blue : null,
+              color: isToday ? Color(0xFF34BB91) : null,
               fontSize: 14,
             ),
           ),
@@ -169,7 +170,7 @@ class ScheduleInputView extends StatelessWidget {
             '${schedule.formattedStartTime} - ${schedule.formattedEndTime}',
             style: const TextStyle(
               fontWeight: FontWeight.w500,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
         ],
@@ -238,6 +239,8 @@ class ScheduleInputView extends StatelessWidget {
         surfaceTintColor: Colors.white,
         elevation: 5,
         title: const Text('Create New Schedule'),
+        titleTextStyle: const TextStyle(
+            fontSize: 18, fontWeight: FontWeight.w400, color: Colors.black),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -255,7 +258,8 @@ class ScheduleInputView extends StatelessWidget {
                 const SizedBox(height: 18),
 
                 ListTile(
-                  leading: const Icon(Icons.calendar_today, color: Colors.blue),
+                  leading: const Icon(Icons.calendar_today,
+                      color: Color(0xFF34BB91)),
                   title: const Text('Select Date'),
                   subtitle: Text(
                     _selectedDate.value == null
@@ -264,7 +268,7 @@ class ScheduleInputView extends StatelessWidget {
                     style: TextStyle(
                       color: _selectedDate.value == null
                           ? Colors.grey[600]
-                          : Colors.blue,
+                          : const Color(0xFF34BB91),
                     ),
                   ),
                   trailing: Text(
@@ -282,8 +286,8 @@ class ScheduleInputView extends StatelessWidget {
                 Column(
                   children: [
                     ListTile(
-                      leading:
-                          const Icon(Icons.access_time, color: Colors.green),
+                      leading: const Icon(Icons.access_time,
+                          color: Color(0xFF34BB91)),
                       title: const Text('Start Time'),
                       subtitle: const Text('When to start playing'),
                       trailing: Text(
@@ -299,7 +303,7 @@ class ScheduleInputView extends StatelessWidget {
                     ),
                     ListTile(
                       leading: const Icon(Icons.access_time_filled,
-                          color: Colors.orange),
+                          color: Color(0xFF34BB91)),
                       title: const Text('End Time'),
                       subtitle: const Text('When to stop playing'),
                       trailing: Text(
@@ -323,7 +327,10 @@ class ScheduleInputView extends StatelessWidget {
                   decoration: const InputDecoration(
                     labelText: 'Interval (seconds)',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.timer),
+                    prefixIcon: Icon(
+                      Icons.timer,
+                      color: Color(0xFF34BB91),
+                    ),
                     helperText: 'How often to play the sound e.g (10 seconds)',
                   ),
                 ),
@@ -345,7 +352,9 @@ class ScheduleInputView extends StatelessWidget {
                           Icon(
                             isUploaded ? Icons.upload_file : Icons.music_note,
                             size: 16,
-                            color: isUploaded ? Colors.green : Colors.grey,
+                            color: isUploaded
+                                ? const Color(0xFF34BB91)
+                                : Colors.grey,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -383,7 +392,10 @@ class ScheduleInputView extends StatelessWidget {
                   decoration: const InputDecoration(
                     labelText: 'Select Sound',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.volume_up),
+                    prefixIcon: Icon(
+                      Icons.volume_up,
+                      color: Color(0xFF34BB91),
+                    ),
                     helperText: 'Choose from assets or uploaded sounds',
                   ),
                 ),
@@ -398,7 +410,7 @@ class ScheduleInputView extends StatelessWidget {
                     onPressed: _addSchedule,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF34BB91),
                       foregroundColor: Colors.white,
                     ),
                   ),
@@ -418,14 +430,14 @@ class ScheduleInputView extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.schedule, color: Colors.blue),
+                          const Icon(Icons.schedule, color: Color(0xFF34BB91)),
                           const SizedBox(width: 8),
                           const Text(
                             'Active Schedules',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
                           ),
                           const Spacer(),
                           Container(
@@ -434,13 +446,13 @@ class ScheduleInputView extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.1),
+                              color: const Color(0xFF34BB91).withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${controller.schedules.length} active',
                               style: const TextStyle(
-                                color: Colors.blue,
+                                color: Colors.black,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -473,7 +485,7 @@ class ScheduleInputView extends StatelessWidget {
                                     backgroundColor: controller.isPlaying.value
                                         ? (controller.isPaused.value
                                             ? Colors.green
-                                            : Colors.orange)
+                                            : const Color(0xFF34BB91))
                                         : Colors.green,
                                     foregroundColor: Colors.white,
                                   ),
