@@ -234,6 +234,9 @@ class ScheduleInputView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 5,
         title: const Text('Create New Schedule'),
         actions: [
           IconButton(
@@ -251,59 +254,61 @@ class ScheduleInputView extends StatelessWidget {
               children: [
                 const SizedBox(height: 18),
 
-                Card(
-                  child: ListTile(
-                    leading:
-                        const Icon(Icons.calendar_today, color: Colors.blue),
-                    title: const Text('Select Date'),
-                    subtitle: Text(
-                      _selectedDate.value == null
-                          ? 'Choose a date for your schedule'
-                          : 'Selected: ${_formatDateDisplay(_selectedDate.value!)}',
-                      style: TextStyle(
-                        color: _selectedDate.value == null
-                            ? Colors.grey[600]
-                            : Colors.blue,
-                      ),
+                ListTile(
+                  leading: const Icon(Icons.calendar_today, color: Colors.blue),
+                  title: const Text('Select Date'),
+                  subtitle: Text(
+                    _selectedDate.value == null
+                        ? 'Choose a date for your schedule'
+                        : 'Selected: ${_formatDateDisplay(_selectedDate.value!)}',
+                    style: TextStyle(
+                      color: _selectedDate.value == null
+                          ? Colors.grey[600]
+                          : Colors.blue,
                     ),
-                    trailing: Text(
-                      _formatDate(_selectedDate.value),
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    onTap: () => _pickDate(context),
                   ),
+                  trailing: Text(
+                    _formatDate(_selectedDate.value),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () => _pickDate(context),
                 ),
-                const SizedBox(height: 8),
-
+                const Divider(
+                  height: 1,
+                  endIndent: 20,
+                  indent: 20,
+                ),
                 // Time Selection
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading:
-                            const Icon(Icons.access_time, color: Colors.green),
-                        title: const Text('Start Time'),
-                        subtitle: const Text('When to start playing'),
-                        trailing: Text(
-                          _formatTime(_startTime.value),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        onTap: () => _pickTime(context, _startTime),
+                Column(
+                  children: [
+                    ListTile(
+                      leading:
+                          const Icon(Icons.access_time, color: Colors.green),
+                      title: const Text('Start Time'),
+                      subtitle: const Text('When to start playing'),
+                      trailing: Text(
+                        _formatTime(_startTime.value),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.access_time_filled,
-                            color: Colors.orange),
-                        title: const Text('End Time'),
-                        subtitle: const Text('When to stop playing'),
-                        trailing: Text(
-                          _formatTime(_endTime.value),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        onTap: () => _pickTime(context, _endTime),
+                      onTap: () => _pickTime(context, _startTime),
+                    ),
+                    const Divider(
+                      height: 1,
+                      endIndent: 20,
+                      indent: 20,
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.access_time_filled,
+                          color: Colors.orange),
+                      title: const Text('End Time'),
+                      subtitle: const Text('When to stop playing'),
+                      trailing: Text(
+                        _formatTime(_endTime.value),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                    ],
-                  ),
+                      onTap: () => _pickTime(context, _endTime),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
 
