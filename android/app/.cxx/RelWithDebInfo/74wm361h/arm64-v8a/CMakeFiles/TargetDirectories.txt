@@ -1,0 +1,2 @@
+/Users/muhammadanusgul/Downloads/one/android/app/.cxx/RelWithDebInfo/74wm361h/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/muhammadanusgul/Downloads/one/android/app/.cxx/RelWithDebInfo/74wm361h/arm64-v8a/CMakeFiles/rebuild_cache.dir
