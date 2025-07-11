@@ -36,66 +36,66 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _login() async {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const BottomNavBar()),
-    );
-    // final String email = _emailController.text.trim();
-    // final String password = _passwordController.text.trim();
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const BottomNavBar()),
+    // );
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
 
-    // if (email.isEmpty || password.isEmpty) {
-    //   _showErrorDialog("Email and Password cannot be empty.");
-    //   return;
-    // }
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog("Email and Password cannot be empty.");
+      return;
+    }
 
-    // setState(() {
-    //   _isLoading = true;
-    // });
+    setState(() {
+      _isLoading = true;
+    });
 
-    // try {
-    //   final response = await http.post(
-    //     Uri.parse('http://api.thebirdo.com/api/login'),
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode({'email': email, 'password': password}),
-    //   );
+    try {
+      final response = await http.post(
+        Uri.parse('http://api.thebirdo.com/api/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
 
-    //   debugPrint("Response Status Code: ${response.statusCode}");
-    //   debugPrint("Response Body: ${response.body}");
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.body}");
 
-    //   if (response.statusCode == 200) {
-    //     final responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
 
-    //     if (responseData.containsKey('user')) {
-    //       final user = responseData['user'];
-    //       String name = user['name'] ?? 'Unknown User';
-    //       String email = user['email'] ?? 'No Email';
+        if (responseData.containsKey('user')) {
+          final user = responseData['user'];
+          String name = user['name'] ?? 'Unknown User';
+          String email = user['email'] ?? 'No Email';
 
-    //       SharedPreferences prefs = await SharedPreferences.getInstance();
-    //       await prefs.setString('userName', name);
-    //       await prefs.setString('userEmail', email);
-    //       await prefs.setBool('isLoggedIn', true);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('userName', name);
+          await prefs.setString('userEmail', email);
+          await prefs.setBool('isLoggedIn', true);
 
-    //       if (!mounted) return;
-    //       Navigator.pushReplacement(
-    //         context,
-    //         MaterialPageRoute(builder: (context) => const BottomNavBar()),
-    //       );
-    //     } else {
-    //       _showErrorDialog("Invalid response from server.");
-    //     }
-    //   } else {
-    //     final responseData = json.decode(response.body);
-    //     String errorMessage = responseData['message'] ?? 'Login failed';
-    //     _showErrorDialog(errorMessage);
-    //   }
-    // } catch (e) {
-    //   _showErrorDialog("An error occurred. Please try again.");
-    //   debugPrint("Login error: $e");
-    // } finally {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    // }
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const BottomNavBar()),
+          );
+        } else {
+          _showErrorDialog("Invalid response from server.");
+        }
+      } else {
+        final responseData = json.decode(response.body);
+        String errorMessage = responseData['message'] ?? 'Login failed';
+        _showErrorDialog(errorMessage);
+      }
+    } catch (e) {
+      _showErrorDialog("An error occurred. Please try again.");
+      debugPrint("Login error: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _showErrorDialog(String message) {

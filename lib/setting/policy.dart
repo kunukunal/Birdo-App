@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class Policy extends StatelessWidget {
   const Policy({super.key});
 
@@ -8,25 +9,31 @@ class Policy extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20,right:20,top: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
           child: SingleChildScrollView(
             child: Column(
               children: [
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context); // Navigate back to the previous page
+                        Navigator.pop(
+                            context); // Navigate back to the previous page
                       },
-                      child: const Icon(Icons.arrow_back,size: 25,),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        size: 25,
+                      ),
                     ),
-                    const Text("Privacy Policy",style: TextStyle(fontSize: 24,fontWeight: FontWeight.w500),),
+                    const Text(
+                      "Privacy Policy",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                    ),
                     const Text("  "),
                   ],
                 ),
-
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
@@ -42,7 +49,7 @@ class Policy extends StatelessWidget {
                         ),
                         SizedBox(height: 16),
                         Text(
-                          'At The Birdo, we are dedicated to helping homeowners maintain a peaceful living environment by keeping birds away from their properties. Established by Lakshay Taneja, our mission is to provide innovative solutions that effectively prevent birds from perching on homes while ensuring a harmonious balance with nature.',
+                          'At The Birdo, we are dedicated to helping homeowners maintain a peaceful living environment by keeping birds away from their properties. Established by Lakhshya Taneja, our mission is to provide innovative solutions that effectively prevent birds from perching on homes while ensuring a harmonious balance with nature.',
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
@@ -68,7 +75,7 @@ class Policy extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Founded by Lakshay Taneja, The Birdo began with a vision to develop effective solutions for homeowners facing challenges with birds. Through extensive research and development, we have created a sound-based system that deters birds from settling on your house, allowing you to enjoy your living space in peace.',
+                          'Founded by Lakhshya Taneja, The Birdo began with a vision to develop effective solutions for homeowners facing challenges with birds. Through extensive research and development, we have created a sound-based system that deters birds from settling on your house, allowing you to enjoy your living space in peace.',
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
@@ -82,8 +89,8 @@ class Policy extends StatelessWidget {
                         SizedBox(height: 8),
                         Text(
                           'We specialize in:\n'
-                              '- Sound Deterrent Solutions: Our innovative devices emit sounds that effectively discourage birds from perching on your home, ensuring a serene environment.\n'
-                              '- Expert Guidance: Our team provides personalized recommendations on the best solutions tailored to your specific needs and property layout.',
+                          '- Sound Deterrent Solutions: Our innovative devices emit sounds that effectively discourage birds from perching on your home, ensuring a serene environment.\n'
+                          '- Expert Guidance: Our team provides personalized recommendations on the best solutions tailored to your specific needs and property layout.',
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 16),
@@ -129,7 +136,6 @@ class Policy extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
