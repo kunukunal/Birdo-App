@@ -319,8 +319,7 @@ class ScheduleInputView extends StatelessWidget {
                     labelText: 'Interval (seconds)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.timer),
-                    helperText:
-                        'How often to play the sound (e.g., 30 for every 30 seconds)',
+                    helperText: 'How often to play the sound e.g (10 seconds)',
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -423,7 +422,7 @@ class ScheduleInputView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // const Spacer(),
+                          const Spacer(),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
