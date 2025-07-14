@@ -8,7 +8,8 @@ class ScheduleInputView extends StatelessWidget {
   ScheduleInputView({super.key});
 
   final controller = Get.put(AudioSchedulerController());
-  final _selectedDate = Rx<DateTime?>(null);
+  final _selectedStartDate = Rx<DateTime?>(null);
+  final _selectedEndDate = Rx<DateTime?>(null);
   final _startTime = Rx<TimeOfDay?>(null);
   final _endTime = Rx<TimeOfDay?>(null);
   final _selectedSound = ''.obs;
@@ -55,97 +56,147 @@ class ScheduleInputView extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 18),
-                  GestureDetector(
-                    onTap: () => _pickDate(context),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        // labelText: 'Date',
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.calendar_today,
-                          color: Color(0xFF34BB91),
+
+                  Row(
+                    children: [
+                      /// Start Time Field
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _pickStartDate(context),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              // labelText: 'Date',
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.calendar_month,
+                                color: Color(0xFF34BB91),
+                              ),
+                            ),
+                            child: Text(
+                              _selectedStartDate.value == null
+                                  ? 'Start date'
+                                  : formatDate(_selectedStartDate.value!),
+                              style: TextStyle(
+                                color: _selectedStartDate.value == null
+                                    ? Colors.grey[600]
+                                    : null,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        _selectedDate.value == null
-                            ? 'Tap to choose a date'
-                            : formatDate(_selectedDate.value!),
-                        style: TextStyle(
-                          color: _selectedDate.value == null
-                              ? Colors.grey[600]
-                              : null,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(width: 15),
+
+                      /// End Time Field
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _pickEndDate(context),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              // labelText: 'Date',
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.calendar_month,
+                                color: Color(0xFF34BB91),
+                              ),
+                            ),
+                            child: Text(
+                              _selectedEndDate.value == null
+                                  ? 'End date'
+                                  : formatDate(_selectedEndDate.value!),
+                              style: TextStyle(
+                                color: _selectedEndDate.value == null
+                                    ? Colors.grey[600]
+                                    : null,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      /// Start Time Field
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _pickTime(context, _startTime),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              // labelText: 'Start Time',
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.access_alarm,
+                                color: Color(0xFF34BB91),
+                              ),
+                            ),
+                            child: Text(
+                              _startTime.value == null
+                                  ? 'Start time'
+                                  : formatTime(_startTime.value),
+                              style: TextStyle(
+                                color: _startTime.value == null
+                                    ? Colors.grey[600]
+                                    : null,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
 
-                  /// Start Time Field
-                  GestureDetector(
-                    onTap: () => _pickTime(context, _startTime),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        // labelText: 'Start Time',
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.access_time,
-                          color: Color(0xFF34BB91),
-                        ),
-                      ),
-                      child: Text(
-                        _startTime.value == null
-                            ? 'Tap to start time'
-                            : formatTime(_startTime.value),
-                        style: TextStyle(
-                          color: _startTime.value == null
-                              ? Colors.grey[600]
-                              : null,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  /// End Time Field
-                  GestureDetector(
-                    onTap: () => _pickTime(context, _endTime),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        // labelText: 'End Time',
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.access_time_filled,
-                          color: Color(0xFF34BB91),
+                      /// End Time Field
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _pickTime(context, _endTime),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              // labelText: 'End Time',
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.access_alarm,
+                                color: Color(0xFF34BB91),
+                              ),
+                            ),
+                            child: Text(
+                              _endTime.value == null
+                                  ? 'End time'
+                                  : formatTime(_endTime.value),
+                              style: TextStyle(
+                                color: _endTime.value == null
+                                    ? Colors.grey[600]
+                                    : null,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        _endTime.value == null
-                            ? 'Tap to start time'
-                            : formatTime(_endTime.value),
-                        style: TextStyle(
-                          color:
-                              _endTime.value == null ? Colors.grey[600] : null,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 18),
                   // Interval Input
@@ -157,16 +208,17 @@ class ScheduleInputView extends StatelessWidget {
                       debugPrint("Interval changed to: $value");
                     },
                     decoration: InputDecoration(
-                      labelText: 'Interval (seconds)',
+                      hintText: 'Interval (seconds)',
                       filled: true,
                       fillColor: Colors.grey[50],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide.none,
                       ),
-                      hintStyle: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
+                      hintStyle: TextStyle(
+                        color:
+                            _interval.value.isEmpty ? Colors.grey[600] : null,
+                        fontWeight: FontWeight.w500,
                       ),
                       prefixIcon: const Icon(
                         Icons.timer,
@@ -230,7 +282,7 @@ class ScheduleInputView extends StatelessWidget {
                           "Sound selected: ${controller.getSoundDisplayName(value ?? '')}");
                     },
                     decoration: InputDecoration(
-                      labelText: 'Select Sound',
+                      hintText: 'Select Sound',
                       filled: true,
                       fillColor: Colors.grey[50],
                       border: OutlineInputBorder(
@@ -465,7 +517,7 @@ class ScheduleInputView extends StatelessWidget {
   void _addSchedule() {
     debugPrint("=== ATTEMPTING TO ADD SCHEDULE ===");
 
-    if (_selectedDate.value == null) {
+    if (_selectedStartDate.value == null) {
       debugPrint("❌ No date selected");
       Get.snackbar('Error', 'Please select a date');
       return;
@@ -497,7 +549,7 @@ class ScheduleInputView extends StatelessWidget {
     }
 
     final schedule = AudioSchedule(
-      date: _selectedDate.value!,
+      date: _selectedStartDate.value!,
       startTime: _startTime.value!,
       endTime: _endTime.value!,
       soundPath: _selectedSound.value,
@@ -514,7 +566,8 @@ class ScheduleInputView extends StatelessWidget {
     controller.addSchedule(schedule);
 
     // Reset form
-    _selectedDate.value = null;
+    _selectedStartDate.value = null;
+    _selectedEndDate.value = null;
     _startTime.value = null;
     _endTime.value = null;
     _selectedSound.value = '';
@@ -554,10 +607,10 @@ class ScheduleInputView extends StatelessWidget {
     }
   }
 
-  Future<void> _pickDate(BuildContext context) async {
+  Future<void> _pickStartDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate.value ?? DateTime.now(),
+      initialDate: _selectedStartDate.value ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
@@ -580,7 +633,38 @@ class ScheduleInputView extends StatelessWidget {
     );
 
     if (picked != null) {
-      _selectedDate.value = picked;
+      _selectedStartDate.value = picked;
+      debugPrint("Date selected: ${formatDate(picked)}");
+    }
+  }
+
+  Future<void> _pickEndDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedEndDate.value ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF34BB91),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            datePickerTheme: const DatePickerThemeData(
+              headerForegroundColor: Colors.white,
+              headerBackgroundColor: Color(0xFF34BB91),
+              rangeSelectionBackgroundColor: Color(0xFF34BB91),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      _selectedEndDate.value = picked;
       debugPrint("Date selected: ${formatDate(picked)}");
     }
   }
