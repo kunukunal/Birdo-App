@@ -237,7 +237,7 @@ class AudioSchedulerController extends GetxController {
 
     // Set up periodic timer
     Timer timer = Timer.periodic(
-      Duration(seconds: schedule.interval),
+      Duration(minutes: schedule.interval),
       (timer) async {
         // Don't play if paused
         if (isPaused.value) {

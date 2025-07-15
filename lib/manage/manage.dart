@@ -8,13 +8,15 @@ class ScheduleInputView extends StatelessWidget {
   ScheduleInputView({super.key});
 
   final controller = Get.put(AudioSchedulerController());
-  final _selectedStartDate = Rx<DateTime?>(null);
-  final _selectedEndDate = Rx<DateTime?>(null);
+  // final _selectedStartDate = Rx<DateTime?>(null);
+  // final _selectedEndDate = Rx<DateTime?>(null);
   final _startTime = Rx<TimeOfDay?>(null);
   final _endTime = Rx<TimeOfDay?>(null);
   final _selectedSound = ''.obs;
   final _interval = ''.obs;
   final _intervalController = TextEditingController();
+  final ValueNotifier<DateTime?> _selectedStartDate = ValueNotifier(null);
+  final ValueNotifier<DateTime?> _selectedEndDate = ValueNotifier(null);
 
   void _refreshSounds() {
     controller.refreshSounds();
@@ -59,13 +61,12 @@ class ScheduleInputView extends StatelessWidget {
 
                   Row(
                     children: [
-                      /// Start Time Field
+                      /// Start Date Field
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => _pickStartDate(context),
+                          onTap: () => _pickDateRange(context),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              // labelText: 'Date',
                               filled: true,
                               fillColor: Colors.grey[50],
                               border: OutlineInputBorder(
@@ -77,15 +78,18 @@ class ScheduleInputView extends StatelessWidget {
                                 color: Color(0xFF34BB91),
                               ),
                             ),
-                            child: Text(
-                              _selectedStartDate.value == null
-                                  ? 'Start date'
-                                  : formatDate(_selectedStartDate.value!),
-                              style: TextStyle(
-                                color: _selectedStartDate.value == null
-                                    ? Colors.grey[600]
-                                    : null,
-                                fontWeight: FontWeight.w500,
+                            child: ValueListenableBuilder(
+                              valueListenable: _selectedStartDate,
+                              builder: (_, DateTime? startDate, __) => Text(
+                                startDate == null
+                                    ? 'Start date'
+                                    : formatDate(startDate),
+                                style: TextStyle(
+                                  color: startDate == null
+                                      ? Colors.grey[600]
+                                      : null,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -93,13 +97,12 @@ class ScheduleInputView extends StatelessWidget {
                       ),
                       const SizedBox(width: 15),
 
-                      /// End Time Field
+                      /// End Date Field
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => _pickEndDate(context),
+                          onTap: () => _pickDateRange(context),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              // labelText: 'Date',
                               filled: true,
                               fillColor: Colors.grey[50],
                               border: OutlineInputBorder(
@@ -111,15 +114,17 @@ class ScheduleInputView extends StatelessWidget {
                                 color: Color(0xFF34BB91),
                               ),
                             ),
-                            child: Text(
-                              _selectedEndDate.value == null
-                                  ? 'End date'
-                                  : formatDate(_selectedEndDate.value!),
-                              style: TextStyle(
-                                color: _selectedEndDate.value == null
-                                    ? Colors.grey[600]
-                                    : null,
-                                fontWeight: FontWeight.w500,
+                            child: ValueListenableBuilder(
+                              valueListenable: _selectedEndDate,
+                              builder: (_, DateTime? endDate, __) => Text(
+                                endDate == null
+                                    ? 'End date'
+                                    : formatDate(endDate),
+                                style: TextStyle(
+                                  color:
+                                      endDate == null ? Colors.grey[600] : null,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -127,6 +132,7 @@ class ScheduleInputView extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 18),
                   Row(
                     children: [
@@ -208,7 +214,7 @@ class ScheduleInputView extends StatelessWidget {
                       debugPrint("Interval changed to: $value");
                     },
                     decoration: InputDecoration(
-                      hintText: 'Interval (seconds)',
+                      hintText: 'Interval (minutes)',
                       filled: true,
                       fillColor: Colors.grey[50],
                       border: OutlineInputBorder(
@@ -365,85 +371,21 @@ class ScheduleInputView extends StatelessWidget {
 
                         // Control buttons
                         if (controller.schedules.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton.icon(
-                                    icon: Icon(controller.isPlaying.value
-                                        ? (controller.isPaused.value
-                                            ? Icons.play_arrow
-                                            : Icons.pause)
-                                        : Icons.play_arrow),
-                                    label: Text(controller.isPlaying.value
-                                        ? (controller.isPaused.value
-                                            ? 'Resume'
-                                            : 'Pause')
-                                        : 'Start'),
-                                    onPressed: controller.togglePlayPause,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          controller.isPlaying.value
-                                              ? (controller.isPaused.value
-                                                  ? Colors.green
-                                                  : const Color(0xFF34BB91))
-                                              : Colors.green,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: controller.isPlaying.value
-                                        ? (controller.isPaused.value
-                                            ? Colors.orange.withOpacity(0.1)
-                                            : Colors.green.withOpacity(0.1))
-                                        : Colors.grey.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        controller.isPlaying.value
-                                            ? (controller.isPaused.value
-                                                ? Icons.pause
-                                                : Icons.play_arrow)
-                                            : Icons.stop,
-                                        size: 16,
-                                        color: controller.isPlaying.value
-                                            ? (controller.isPaused.value
-                                                ? Colors.orange
-                                                : Colors.green)
-                                            : Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        controller.isPlaying.value
-                                            ? (controller.isPaused.value
-                                                ? 'Paused'
-                                                : 'Playing')
-                                            : 'Stopped',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: controller.isPlaying.value
-                                              ? (controller.isPaused.value
-                                                  ? Colors.orange
-                                                  : Colors.green)
-                                              : Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                          ElevatedButton.icon(
+                            icon: Icon(controller.isPlaying.value
+                                ? (controller.isPaused.value
+                                    ? Icons.play_arrow
+                                    : Icons.pause)
+                                : Icons.play_arrow),
+                            label: Text(controller.isPlaying.value
+                                ? (controller.isPaused.value
+                                    ? 'Resume'
+                                    : 'Pause')
+                                : 'Start'),
+                            onPressed: controller.togglePlayPause,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF34BB91),
+                              foregroundColor: Colors.white,
                             ),
                           ),
 
@@ -544,7 +486,7 @@ class ScheduleInputView extends StatelessWidget {
     if (int.tryParse(_interval.value) == null ||
         int.parse(_interval.value) <= 0) {
       debugPrint("❌ Invalid interval: ${_interval.value}");
-      Get.snackbar('Error', 'Please enter a valid interval in seconds');
+      Get.snackbar('Error', 'Please enter a valid interval in minutes');
       return;
     }
 
@@ -590,6 +532,7 @@ class ScheduleInputView extends StatelessWidget {
               onSurface: Colors.black,
             ),
             timePickerTheme: const TimePickerThemeData(
+              dayPeriodColor: Color(0xFF34BB91),
               hourMinuteTextColor: Colors.white,
               hourMinuteColor: Color(0xFF34BB91),
               dialHandColor: Color(0xFF34BB91),
@@ -607,12 +550,81 @@ class ScheduleInputView extends StatelessWidget {
     }
   }
 
-  Future<void> _pickStartDate(BuildContext context) async {
-    final picked = await showDatePicker(
+  // Future<void> _pickStartDate(BuildContext context) async {
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: _selectedStartDate.value ?? DateTime.now(),
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime.now().add(const Duration(days: 365)),
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: Theme.of(context).copyWith(
+  //           colorScheme: const ColorScheme.light(
+  //             primary: Color(0xFF34BB91),
+  //             onPrimary: Colors.white,
+  //             onSurface: Colors.black,
+  //           ),
+  //           datePickerTheme: const DatePickerThemeData(
+  //             headerForegroundColor: Colors.white,
+  //             headerBackgroundColor: Color(0xFF34BB91),
+  //             rangeSelectionBackgroundColor: Color(0xFF34BB91),
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+
+  //   if (picked != null) {
+  //     _selectedStartDate.value = picked;
+  //     debugPrint("Date selected: ${formatDate(picked)}");
+  //   }
+  // }
+
+  // Future<void> _pickEndDate(BuildContext context) async {
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: _selectedEndDate.value ?? DateTime.now(),
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime.now().add(const Duration(days: 365)),
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: Theme.of(context).copyWith(
+  //           colorScheme: const ColorScheme.light(
+  //             primary: Color(0xFF34BB91),
+  //             onPrimary: Colors.white,
+  //             onSurface: Colors.black,
+  //           ),
+  //           datePickerTheme: const DatePickerThemeData(
+  //             headerForegroundColor: Colors.white,
+  //             headerBackgroundColor: Color(0xFF34BB91),
+  //             rangeSelectionBackgroundColor: Color(0xFF34BB91),
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+
+  //   if (picked != null) {
+  //     _selectedEndDate.value = picked;
+  //     debugPrint("Date selected: ${formatDate(picked)}");
+  //   }
+  // }
+
+  Future<void> _pickDateRange(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: _selectedStartDate.value ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365)),
+      initialDateRange:
+          (_selectedStartDate.value != null && _selectedEndDate.value != null)
+              ? DateTimeRange(
+                  start: _selectedStartDate.value!,
+                  end: _selectedEndDate.value!,
+                )
+              : null,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -621,10 +633,10 @@ class ScheduleInputView extends StatelessWidget {
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
-            datePickerTheme: const DatePickerThemeData(
-              headerForegroundColor: Colors.white,
-              headerBackgroundColor: Color(0xFF34BB91),
-              rangeSelectionBackgroundColor: Color(0xFF34BB91),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF34BB91), // Button text color
+              ),
             ),
           ),
           child: child!,
@@ -633,39 +645,8 @@ class ScheduleInputView extends StatelessWidget {
     );
 
     if (picked != null) {
-      _selectedStartDate.value = picked;
-      debugPrint("Date selected: ${formatDate(picked)}");
-    }
-  }
-
-  Future<void> _pickEndDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedEndDate.value ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF34BB91),
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            datePickerTheme: const DatePickerThemeData(
-              headerForegroundColor: Colors.white,
-              headerBackgroundColor: Color(0xFF34BB91),
-              rangeSelectionBackgroundColor: Color(0xFF34BB91),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      _selectedEndDate.value = picked;
-      debugPrint("Date selected: ${formatDate(picked)}");
+      _selectedStartDate.value = picked.start;
+      _selectedEndDate.value = picked.end;
     }
   }
 }
