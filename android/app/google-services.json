@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "453594063908",
+    "project_id": "birdo-1b7b5",
+    "storage_bucket": "birdo-1b7b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453594063908:android:b28966ef4bb1c5e19aa4b1",
+        "android_client_info": {
+          "package_name": "com.thebirdo.thebirdo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhwxqnZLIKgAMDLn3MU-2iXcji_RlTcBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
