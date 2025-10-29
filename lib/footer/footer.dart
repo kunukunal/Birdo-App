@@ -1,12 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:birdo/home/home.dart';
 import 'package:birdo/manage/manage.dart';
+import 'package:birdo/models/time_settings.dart'; // Import TimeSettings model
 import 'package:birdo/setting/setting.dart';
 import 'package:birdo/sound/soundlist.dart';
-import 'package:birdo/models/time_settings.dart'; // Import TimeSettings model
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-void main() => runApp(const MaterialApp(home: BottomNavBar()));
+import '../controller/audio_controller.dart';
+
+// void main() => runApp(const MaterialApp(home: BottomNavBar()));
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -21,6 +24,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   // Shared state for pathOrder and timeSettings
   List<String> _pathOrder = [];
+
+  final AudioSchedulerController controller =
+      Get.put(AudioSchedulerController());
+
+  @override
+  void initState() {
+    super.initState();
+    // controller.loadSchedulesFromApi();
+  }
+
   TimeSettings? _timeSettings;
 
   // Callback to update pathOrder and switch to Home page
@@ -29,6 +42,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
       _pathOrder = newPathOrder;
       _page = 0; // Navigate to Home page
     });
+
+    // Force the navigation bar to update its state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _bottomNavigationKey.currentState?.setPage(0);
+    });
   }
 
   // Callback to update timeSettings and switch to Home page
@@ -36,6 +54,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
     setState(() {
       _timeSettings = newTimeSettings;
       _page = 0; // Navigate to Home page
+    });
+
+    // Force the navigation bar to update its state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _bottomNavigationKey.currentState?.setPage(0);
     });
   }
 
@@ -61,6 +84,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Expanded(
@@ -69,12 +93,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
             Container(
               height: 90, // Fixed height for the navigation bar container
               margin: const EdgeInsets.only(
-                  left: 10, right: 10, bottom: 10), // Add margin on all sides
+                  left: 0, right: 0, bottom: 0), // Add margin on all sides
               child: ClipRRect(
                 borderRadius:
                     BorderRadius.circular(30), // Apply rounded corners
                 child: CurvedNavigationBar(
                   key: _bottomNavigationKey,
+                  index: _page, // Add this line to control the selected index
                   items: const <Widget>[
                     Icon(Icons.home_outlined, size: 30, color: Colors.white),
                     Icon(Icons.access_time, size: 30, color: Colors.white),

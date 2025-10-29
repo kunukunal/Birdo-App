@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../footer/footer.dart';
+import 'otp.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -35,16 +37,74 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<void> _login() async {
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const BottomNavBar()),
-    // );
-    final String email = _emailController.text.trim();
-    final String password = _passwordController.text.trim();
+  // Future<void> _login() async {
+  //   // Navigator.pushReplacement(
+  //   //   context,
+  //   //   MaterialPageRoute(builder: (context) => const BottomNavBar()),
+  //   // );
+  //   final String email = _emailController.text.trim();
+  //   final String password = _passwordController.text.trim();
+  //
+  //   if (email.isEmpty) {
+  //     _showErrorDialog("Email and Password cannot be empty.");
+  //     return;
+  //   }
+  //
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('http://api.thebirdo.com/api/login'),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode({'email': email, 'password': password}),
+  //     );
+  //
+  //     debugPrint("Response Status Code: ${response.statusCode}");
+  //     debugPrint("Response Body: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       final responseData = json.decode(response.body);
+  //
+  //       if (responseData.containsKey('user')) {
+  //         final user = responseData['user'];
+  //         String name = user['name'] ?? 'Unknown User';
+  //         String email = user['email'] ?? 'No Email';
+  //
+  //         SharedPreferences prefs = await SharedPreferences.getInstance();
+  //         await prefs.setString('userName', name);
+  //         await prefs.setString('userEmail', email);
+  //         await prefs.setBool('isLoggedIn', true);
+  //
+  //         if (!mounted) return;
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const BottomNavBar()),
+  //         );
+  //       } else {
+  //         _showErrorDialog("Invalid response from server.");
+  //       }
+  //     } else {
+  //       final responseData = json.decode(response.body);
+  //       String errorMessage = responseData['message'] ?? 'Login failed';
+  //       _showErrorDialog(errorMessage);
+  //     }
+  //   } catch (e) {
+  //     _showErrorDialog("An error occurred. Please try again.");
+  //     debugPrint("Login error: $e");
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
-    if (email.isEmpty || password.isEmpty) {
-      _showErrorDialog("Email and Password cannot be empty.");
+  Future<void> _login() async {
+    final String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      _showErrorDialog("Email cannot be empty.");
       return;
     }
 
@@ -54,9 +114,9 @@ class _LoginState extends State<Login> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://api.thebirdo.com/api/login'),
+        Uri.parse('https://api.thebirdo.com/api/generate-otp'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': email}),
       );
 
       debugPrint("Response Status Code: ${response.statusCode}");
@@ -65,27 +125,43 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
 
-        if (responseData.containsKey('user')) {
-          final user = responseData['user'];
-          String name = user['name'] ?? 'Unknown User';
-          String email = user['email'] ?? 'No Email';
+        // Save email to SharedPreferences for later use
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userEmail', email);
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('userName', name);
-          await prefs.setString('userEmail', email);
-          await prefs.setBool('isLoggedIn', true);
-
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const BottomNavBar()),
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData['message']),
+              backgroundColor: Color(0xFF34BB91),
+            ),
           );
+
+          // Navigate to OTP screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpScreen(email: email),
+            ),
+          );
+        }
+      } else if (response.statusCode == 404) {
+        _showErrorDialog("User not found. Please check your email address.");
+      } else if (response.statusCode == 403) {
+        _showErrorDialog("User already logged in.");
+      } else if (response.statusCode == 422) {
+        final responseData = json.decode(response.body);
+        if (responseData.containsKey('errors')) {
+          String errorMessage =
+              responseData['errors']['email']?.first ?? 'Validation failed';
+          _showErrorDialog(errorMessage);
         } else {
-          _showErrorDialog("Invalid response from server.");
+          _showErrorDialog(responseData['message'] ?? 'Validation failed');
         }
       } else {
         final responseData = json.decode(response.body);
-        String errorMessage = responseData['message'] ?? 'Login failed';
+        String errorMessage = responseData['message'] ?? 'Failed to send OTP';
         _showErrorDialog(errorMessage);
       }
     } catch (e) {
@@ -158,7 +234,7 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(20.0),
                         borderSide: BorderSide.none,
                       ),
-                      hintText: 'Email or Phone',
+                      hintText: 'Enter email',
                       hintStyle: const TextStyle(
                         fontWeight: FontWeight.w300,
                         fontSize: 16,
@@ -167,27 +243,27 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      hintText: 'Password',
-                      hintStyle: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: TextField(
+                //     controller: _passwordController,
+                //     obscureText: true,
+                //     decoration: InputDecoration(
+                //       filled: true,
+                //       fillColor: Colors.grey[50],
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(20.0),
+                //         borderSide: BorderSide.none,
+                //       ),
+                //       hintText: 'Password',
+                //       hintStyle: const TextStyle(
+                //         fontWeight: FontWeight.w300,
+                //         fontSize: 16,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 20),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(horizontal: 20),
                 //   child: Row(
@@ -246,7 +322,7 @@ class _LoginState extends State<Login> {
                           ),
                         )
                       : const Text(
-                          'Login',
+                          'Generate OTP',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w500,

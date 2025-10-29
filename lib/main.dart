@@ -1,11 +1,40 @@
 import 'package:birdo/auth/login/login.dart';
+import 'package:birdo/services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'firebase_options.dart';
 import 'footer/footer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    // if (Platform.isIOS) {
+    //   await Firebase.initializeApp(
+    //     options: const FirebaseOptions(
+    //       apiKey: 'AIzaSyDlR0Ox_6_8skqLE7JXSaF0KbENZPx1RM0',
+    //       appId: '1:453594063908:ios:cb9b460877349cd19aa4b1',
+    //       messagingSenderId: '453594063908',
+    //       projectId: 'birdo-1b7b5',
+    //       iosBundleId: 'com.thebirdo.thebirdo',
+    //     ),
+    //   );
+    //   await NotificationService.init();
+    // } else {
+    // Default initialization for other platforms
+
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await NotificationService.init();
+    // }
+    print('Firebase initialization success');
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
+
   runApp(const MyApp());
 }
 

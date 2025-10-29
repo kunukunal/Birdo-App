@@ -129,7 +129,7 @@ class Policy extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'We would love to hear from you! For any inquiries or feedback, feel free to reach out to us at [contact email or phone number]. Follow us on [mention any social media platforms] to stay updated with our latest news, solutions, and tips for maintaining a bird-free home.',
+                          'We would love to hear from you! For any inquiries or feedback, feel free to reach out to us at thebirdosystem@gmail.com.',
                           style: TextStyle(fontSize: 16),
                         ),
                       ],

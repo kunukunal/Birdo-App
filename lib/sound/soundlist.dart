@@ -1,8 +1,10 @@
-import 'package:birdo/schedule/sound_uploader_view.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:birdo/header.dart';
 
 class Soundlist extends StatefulWidget {
   final Function(List<String>) updatePathOrder;
@@ -15,60 +17,271 @@ class Soundlist extends StatefulWidget {
 
 class _SoundlistState extends State<Soundlist> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  List<Map<String, dynamic>> sounds = [
-    {'name': 'OWL', 'path': 'images/owl1.mp3', 'isChecked': false},
-    {'name': 'OWL', 'path': 'images/owl2.mp3', 'isChecked': false},
-    {'name': 'OWL', 'path': 'images/owl3.mp3', 'isChecked': false},
-    {'name': 'OWL', 'path': 'images/owl4.mp3', 'isChecked': false},
-    {'name': 'OWL', 'path': 'images/owl5.mp3', 'isChecked': false},
-    {'name': 'OWL', 'path': 'images/owl6.mp3', 'isChecked': false},
-    {'name': 'Dolphin', 'path': 'images/dolphin-sound.mp3', 'isChecked': false},
-    {'name': 'EAGLE', 'path': 'images/eagle.mp3', 'isChecked': false},
-    {'name': 'GUNSHOT', 'path': 'images/gunshotglock.mp3', 'isChecked': false},
+  List<Map<String, dynamic>> sounds = [];
+  List<String> pathOrder = [];
+  int lastCheckedIndex = -1;
+  bool isLoadingSounds = false;
+
+  // Variables to track playing state
+  String? currentlyPlayingPath;
+  bool isPlaying = false;
+  bool isLoading = false;
+
+  // Default local sounds (fallback)
+  final List<Map<String, dynamic>> defaultSounds = [
+    {
+      'name': 'OWL',
+      'path': 'images/owl1.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'OWL',
+      'path': 'images/owl2.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'OWL',
+      'path': 'images/owl3.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'OWL',
+      'path': 'images/owl4.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'OWL',
+      'path': 'images/owl5.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'OWL',
+      'path': 'images/owl6.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'Dolphin',
+      'path': 'images/dolphin-sound.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'EAGLE',
+      'path': 'images/eagle.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
+    {
+      'name': 'GUNSHOT',
+      'path': 'images/gunshotglock.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
     {
       'name': 'PUNCH SOUND',
       'path': 'images/punchsound.mp3',
-      'isChecked': false
+      'isChecked': false,
+      'isLocal': true
     },
-    {'name': 'RIFLE', 'path': 'images/rifle.mp3', 'isChecked': false},
+    {
+      'name': 'RIFLE',
+      'path': 'images/rifle.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
     {
       'name': 'HIGH PITCH',
       'path': 'images/high pitch sound.mp3',
-      'isChecked': false
+      'isChecked': false,
+      'isLocal': true
     },
-    {'name': 'BIRDO SPECIAL', 'path': 'images/birdo.mp3', 'isChecked': false},
+    {
+      'name': 'BIRDO SPECIAL',
+      'path': 'images/birdo.mp3',
+      'isChecked': false,
+      'isLocal': true
+    },
   ];
-
-  List<String> pathOrder = [];
-  int lastCheckedIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
+    _setupAudioPlayerListeners();
+    _initializeSounds();
+  }
+
+  void _setupAudioPlayerListeners() {
+    // Listen for when audio completes
+    _audioPlayer.onPlayerComplete.listen((event) {
+      if (mounted) {
+        setState(() {
+          currentlyPlayingPath = null;
+          isPlaying = false;
+          isLoading = false;
+        });
+      }
+    });
+
+    // Listen for player state changes
+    _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+          if (state == PlayerState.stopped || state == PlayerState.completed) {
+            currentlyPlayingPath = null;
+            isPlaying = false;
+            isLoading = false;
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> _initializeSounds() async {
+    // Load default sounds first
+    // sounds = List.from(defaultSounds);
+    // await _loadPreferences();
+
+    // Then fetch API sounds
+    await _fetchUserSounds();
+  }
+
+  Future<String?> _getAuthToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token'); // Adjust key based on your token storage
+  }
+
+  Future<void> _fetchUserSounds() async {
+    sounds.clear();
+    setState(() {
+      isLoadingSounds = true;
+    });
+
+    try {
+      String? token = await _getAuthToken();
+
+      if (token == null) {
+        print('No auth token found');
+        setState(() {
+          isLoadingSounds = false;
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('https://api.thebirdo.com/api/user-sounds'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // if (data['sounds'] != null && data['sounds'] is List) {
+        // Clear existing API sounds and keep only local sounds
+        // sounds = sounds.where((sound) => sound['isLocal'] == true).toList();
+
+        // Add API sounds
+        for (var apiSound in data['sounds']) {
+          sounds.add({
+            'id': apiSound['id'],
+            'name': apiSound['name']?.toString().toUpperCase() ?? 'UNKNOWN',
+            'path': apiSound['path'],
+            'url': 'https://thebirdo.com/uploads/sounds/${apiSound['path']}',
+            'isChecked': false,
+            'isLocal': false,
+          });
+          print("id: ${apiSound['id']}");
+          print("name: ${apiSound['name']}");
+        }
+
+        // Load preferences for the updated sounds list
+        await _loadPreferencesForUpdatedSounds();
+        _updatePathOrder();
+      } else if (response.statusCode == 401) {
+        print('Unauthenticated: ${response.body}');
+        _showErrorSnackBar('Authentication failed. Please login again.');
+      } else {
+        print(
+            'Error fetching sounds: ${response.statusCode} - ${response.body}');
+        _showErrorSnackBar('Failed to load sounds from server.');
+      }
+    } catch (e) {
+      print('Exception while fetching user sounds: $e');
+      _showErrorSnackBar('Network error. Please check your connection.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingSounds = false;
+        });
+      }
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Future<void> _loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     for (var sound in sounds) {
-      sound['isChecked'] = prefs.getBool('isChecked_${sound['path']}') ?? false;
+      String key = sound['isLocal'] == true
+          ? 'isChecked_${sound['path']}'
+          : 'isChecked_${sound['id']}';
+      sound['isChecked'] = prefs.getBool(key) ?? false;
     }
 
     List<String>? order = prefs.getStringList('pathOrder');
-    if (order != null) {
-      sounds.sort((a, b) =>
-          order.indexOf(a['path']).compareTo(order.indexOf(b['path'])));
+    if (order != null && order.isNotEmpty) {
+      sounds.sort((a, b) {
+        String aKey = a['isLocal'] == true ? a['path'] : a['id'].toString();
+        String bKey = b['isLocal'] == true ? b['path'] : b['id'].toString();
+        int aIndex = order.indexOf(aKey);
+        int bIndex = order.indexOf(bKey);
+        if (aIndex == -1) aIndex = order.length;
+        if (bIndex == -1) bIndex = order.length;
+        return aIndex.compareTo(bIndex);
+      });
     }
-    lastCheckedIndex = prefs.getInt('lastCheckedIndex') ?? -1;
 
+    lastCheckedIndex = prefs.getInt('lastCheckedIndex') ?? -1;
     setState(() {});
-    _updatePathOrder();
+  }
+
+  Future<void> _loadPreferencesForUpdatedSounds() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (var sound in sounds) {
+      String key = sound['isLocal'] == true
+          ? 'isChecked_${sound['path']}'
+          : 'isChecked_${sound['id']}';
+      sound['isChecked'] = prefs.getBool(key) ?? false;
+    }
+    setState(() {});
   }
 
   Future<void> _savePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     for (var sound in sounds) {
-      prefs.setBool('isChecked_${sound['path']}', sound['isChecked']);
+      String key = sound['isLocal'] == true
+          ? 'isChecked_${sound['path']}'
+          : 'isChecked_${sound['id']}';
+      prefs.setBool(key, sound['isChecked']);
     }
     prefs.setStringList('pathOrder', pathOrder);
     prefs.setInt('lastCheckedIndex', lastCheckedIndex);
@@ -83,119 +296,68 @@ class _SoundlistState extends State<Soundlist> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Header(),
-              ),
-              Expanded(
-                child: ReorderableListView.builder(
-                  itemCount: sounds.length,
-                  onReorder: _onReorder,
-                  itemBuilder: (context, index) {
-                    return _buildSoundItem(
-                      sounds[index]['name']!,
-                      sounds[index]['path']!,
-                      sounds[index]['isChecked'],
-                      index,
-                      key: ValueKey(sounds[index]['path']),
-                    );
-                  },
+              // Add refresh button
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 70,
+                        child: Image.asset('assets/images/logo.png'),
+                      ),
+                    ),
+                    Spacer(),
+                    if (isLoadingSounds)
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF34BB91)),
+                        ),
+                      )
+                    else
+                      IconButton(
+                        onPressed: _fetchUserSounds,
+                        icon:
+                            const Icon(Icons.refresh, color: Color(0xFF34BB91)),
+                        tooltip: 'Refresh sounds',
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => SoundUploaderView(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: const Color(0xFF34BB91),
-                      ),
-                      child: const Center(
+              Expanded(
+                child: sounds.isEmpty && !isLoadingSounds
+                    ? const Center(
                         child: Text(
-                          'Upload',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          'No sounds available',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
                         ),
+                      )
+                    : ReorderableListView.builder(
+                        itemCount: sounds.length,
+                        onReorder: _onReorder,
+                        itemBuilder: (context, index) {
+                          return _buildSoundItem(
+                            sounds[index]['name']!,
+                            sounds[index],
+                            sounds[index]['isChecked'],
+                            index,
+                            key: ValueKey(sounds[index]['isLocal'] == true
+                                ? sounds[index]['path']
+                                : sounds[index]['id'].toString()),
+                          );
+                        },
                       ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _savePreferences();
-                      List<String> checkedPaths = sounds
-                          .where((sound) => sound['isChecked'])
-                          .map((sound) => sound['path'] as String)
-                          .toList();
-                      widget.updatePathOrder(checkedPaths);
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: const Color(0xFF34BB91),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Save',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.of(context).push(
-                  //       MaterialPageRoute(
-                  //         builder: (context) => ScheduleInputView(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: Container(
-                  //     height: 40,
-                  //     width: 100,
-                  //     decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(30),
-                  //       color: const Color(0xFF34BB91),
-                  //     ),
-                  //     child: const Center(
-                  //       child: Text(
-                  //         'Sechdule',
-                  //         style: TextStyle(fontSize: 16, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
               ),
               const SizedBox(height: 20),
-              // FilledButton(
-              //   style: FilledButton.styleFrom(
-              //     backgroundColor: const Color(0xFF34BB91),
-              //     foregroundColor: Colors.white,
-              //     minimumSize: const Size(double.infinity, 50),
-              //   ),
-              //   onPressed: () {
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(
-              //         builder: (context) => ScheduleInputView(),
-              //       ),
-              //     );
-              //   },
-              //   child: const Text(
-              //     'Schedule Settings',
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -203,67 +365,129 @@ class _SoundlistState extends State<Soundlist> {
     );
   }
 
-  Widget _buildSoundItem(String name, String path, bool isChecked, int index,
+  Widget _buildSoundItem(
+      String name, Map<String, dynamic> soundData, bool isChecked, int index,
       {Key? key}) {
+    // Determine the audio path/URL
+    String audioPath;
+    audioPath = soundData['url'] ?? '';
+
+    // Check if this sound is currently playing
+    bool isThisSoundPlaying = currentlyPlayingPath == audioPath && isPlaying;
+
     return Padding(
       key: key,
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: GestureDetector(
-        onTap: () => _playAudio(path),
-        child: Row(
-          children: [
-            Checkbox(
-              activeColor: const Color(0xFF34BB91),
-              value: isChecked,
-              onChanged: (value) {
-                setState(() {
-                  sounds[index]['isChecked'] = value ?? false;
-                  if (value == true) {
-                    lastCheckedIndex = index;
-                  } else if (lastCheckedIndex == index) {
-                    lastCheckedIndex = -1;
-                  }
-                });
-              },
-            ),
-            Expanded(
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: isLoading ? null : () => _toggleAudio(audioPath),
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF34BB91)),
+                  border: Border.all(
+                      color: isLoading ? Colors.grey : const Color(0xFF34BB91)),
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.grey[50],
+                  color: isLoading ? Colors.grey[100] : Colors.grey[50],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.volume_up, color: Color(0xFF34BB91)),
-                          const SizedBox(width: 10),
-                          Text(
-                            name,
-                            style: const TextStyle(
-                                fontSize: 16, color: Color(0xFF34BB91)),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.volume_up,
+                              color: Color(0xFF34BB91),
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: isLoading
+                                      ? Colors.grey
+                                      : const Color(0xFF34BB91),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Icon(Icons.play_arrow, color: Color(0xFF34BB91)),
+                      if (isLoading)
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF34BB91)),
+                          ),
+                        )
+                      else
+                        Icon(
+                          isThisSoundPlaying ? Icons.pause : Icons.play_arrow,
+                          color: const Color(0xFF34BB91),
+                        ),
                     ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Future<void> _playAudio(String path) async {
-    await _audioPlayer.play(AssetSource(path));
+  Future<void> _toggleAudio(
+    String path,
+  ) async {
+    try {
+      if (currentlyPlayingPath == path && isPlaying) {
+        // If the same audio is playing, pause it
+        await _audioPlayer.pause();
+      } else {
+        // Set loading state
+        setState(() {
+          isLoading = true;
+        });
+
+        // Stop any currently playing audio
+        if (currentlyPlayingPath != null && currentlyPlayingPath != path) {
+          await _audioPlayer.stop();
+        }
+
+        // Play the new audio with timeout
+        await _audioPlayer.play(UrlSource(path)).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw TimeoutException(
+                'Audio loading timeout', const Duration(seconds: 10));
+          },
+        );
+
+        setState(() {
+          currentlyPlayingPath = path;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error playing audio: $e');
+      // Show error to user
+      _showErrorSnackBar('Failed to play audio. Please try again.');
+      // Reset state on error
+      setState(() {
+        currentlyPlayingPath = null;
+        isPlaying = false;
+        isLoading = false;
+      });
+    }
   }
 
   void _onReorder(int oldIndex, int newIndex) {
@@ -276,11 +500,16 @@ class _SoundlistState extends State<Soundlist> {
   }
 
   void _updatePathOrder() {
-    pathOrder = sounds.map((sound) => sound['path'] as String).toList();
+    pathOrder = sounds
+        .map((sound) =>
+            sound['isLocal'] == true ? sound['path'] : sound['id'].toString())
+        .cast<String>()
+        .toList();
   }
 
   @override
   void dispose() {
+    _audioPlayer.stop();
     _audioPlayer.dispose();
     super.dispose();
   }

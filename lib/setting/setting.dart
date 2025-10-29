@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:birdo/header.dart';
 import 'package:birdo/setting/Contact.dart';
 import 'package:birdo/setting/aboutus.dart';
 import 'package:birdo/setting/policy.dart';
+import 'package:flutter/material.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -19,8 +19,8 @@ class _SettingState extends State<Setting> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Header(),
               const SizedBox(

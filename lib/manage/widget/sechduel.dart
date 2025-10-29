@@ -1,29 +1,28 @@
 import 'package:birdo/controller/audio_controller.dart';
 import 'package:birdo/controller/dto.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildScheduleCard(
     AudioSchedule schedule, AudioSchedulerController controller) {
   final soundName = schedule.soundDisplayName;
-  final isUploaded = schedule.isUploadedSound;
   final now = DateTime.now();
   final isToday = DateTime(now.year, now.month, now.day).isAtSameMomentAs(
       DateTime(schedule.date.year, schedule.date.month, schedule.date.day));
+
+  // Check if there are multiple sounds
+  final hasMultipleSounds = schedule.soundPaths.length > 1;
+  final shouldShowReadMore =
+      hasMultipleSounds && schedule.soundPaths.length > 2;
 
   return ListTile(
     leading: CircleAvatar(
       backgroundColor: isToday
           ? const Color(0xFF34BB91).withOpacity(0.2)
-          : (isUploaded
-              ? const Color(0xFF34BB91).withOpacity(0.1)
-              : Colors.grey.withOpacity(0.1)),
+          : (Colors.grey.withOpacity(0.1)),
       child: Icon(
-        isToday
-            ? Icons.today
-            : (isUploaded ? Icons.upload_file : Icons.music_note),
-        color: isToday
-            ? const Color(0xFF34BB91)
-            : (isUploaded ? const Color(0xFF34BB91) : Colors.grey),
+        isToday ? Icons.today : (Icons.music_note),
+        color: isToday ? const Color(0xFF34BB91) : (Colors.grey),
         size: 20,
       ),
     ),
@@ -50,7 +49,7 @@ Widget buildScheduleCard(
     subtitle: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Every ${schedule.interval}s'),
+        Text('Every ${schedule.interval}m'),
         Row(
           children: [
             Icon(
@@ -60,33 +59,65 @@ Widget buildScheduleCard(
             ),
             const SizedBox(width: 4),
             Expanded(
-              child: Text(
-                soundName,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: hasMultipleSounds
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          shouldShowReadMore
+                              ? '${schedule.soundPaths.take(2).join(', ')}...'
+                              : soundName,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                        ),
+                        if (shouldShowReadMore)
+                          TextButton(
+                            onPressed: () => _showAllSoundsDialog(schedule),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              'Read More',
+                              style: TextStyle(
+                                color: const Color(0xFF34BB91),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                  : Text(
+                      soundName,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
             ),
-            if (isUploaded)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 1,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  'Uploaded',
-                  style: TextStyle(
-                    fontSize: 8,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
+            // if (isUploaded)
+            //   Container(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 4,
+            //       vertical: 1,
+            //     ),
+            //     decoration: BoxDecoration(
+            //       color: Colors.green.withOpacity(0.1),
+            //       borderRadius: BorderRadius.circular(4),
+            //     ),
+            //     child: const Text(
+            //       'Uploaded',
+            //       style: TextStyle(
+            //         fontSize: 8,
+            //         color: Colors.green,
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ],
@@ -128,4 +159,107 @@ String formatTime(TimeOfDay? time) {
 String formatDate(DateTime? date) {
   if (date == null) return 'Select Date';
   return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}
+
+void _showAllSoundsDialog(AudioSchedule schedule) {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            const Icon(
+              Icons.music_note,
+              color: Color(0xFF34BB91),
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Selected Sounds',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF34BB91),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Schedule for ${formatDateDisplay(schedule.date)}',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: schedule.soundPaths.map((sound) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF34BB91).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFF34BB91).withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.volume_up,
+                            color: const Color(0xFF34BB91),
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              sound,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF34BB91),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Close',
+              style: TextStyle(
+                color: Color(0xFF34BB91),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }

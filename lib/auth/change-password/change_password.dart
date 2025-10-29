@@ -44,7 +44,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       _isChangingPassword = true;
     });
 
-    final url = Uri.parse("http://api.thebirdo.com/api/change-password");
+    final url = Uri.parse("https://api.thebirdo.com/api/change-password");
     final Map<String, dynamic> body = {
       'email': _emailController.text,
       'current_password': _currentPasswordController.text,
@@ -116,8 +116,11 @@ class _ChangePasswordState extends State<ChangePassword> {
               Navigator.pop(context);
               if (success) {
                 // Navigate to login page on success
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const Login()));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (Route<dynamic> route) => false,
+                );
               }
             },
             child: const Text("OK"),

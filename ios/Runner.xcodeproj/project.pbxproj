@@ -7,14 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0048D7CC77A9EE6504B4E2CB /* play2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7FC3703F96557BEA1F9EE1C3 /* play2.mp3 */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		180A23CDCA72E921BA74ECCF /* rifle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 123B4B361CD31B5684FEF6AA /* rifle.mp3 */; };
+		2E7881E50A86163448F68339 /* eagle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 142AFBCD186350115B828745 /* eagle.mp3 */; };
+		306BAE502E729252001659BE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 306BAE4F2E729252001659BE /* GoogleService-Info.plist */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		5EC6F457D90A81D3CFC5AA7F /* play1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B8AC1285DA0C47EC9D199C3B /* play1.mp3 */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		95FB633714C0A055EF068F93 /* high-pitch-sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4E4A35B45814432BE094B514 /* high-pitch-sound.mp3 */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9D1E716EB16B45FC7451354D /* dolphin-sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 168A0ED3E97BA3B3116272EF /* dolphin-sound.mp3 */; };
+		9EF7628D7CB7057AED09320E /* owl2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7AE5983BDBA54450ED1E0624 /* owl2.mp3 */; };
+		A28E15D2BDDEDCAE8BC41B06 /* the-birdo-1st-attempt.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6FA94CC7C23F91EF6EFE2BD6 /* the-birdo-1st-attempt.mp3 */; };
+		AB17149AC237541FDA2D0860 /* owl3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A357FA5C1F67AB267488CEBA /* owl3.mp3 */; };
 		B4006633F0583EC88106DDC1 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 512CCCEC5A6A6780287668BE /* Pods_Runner.framework */; };
+		BDDE926EC09D545CF9C68A92 /* punch-sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5795EF48B0E0618DF132696B /* punch-sound.mp3 */; };
+		BEF4357C097F69C32BFD5765 /* owl5.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A5ECB19A5C850B65ED1781DF /* owl5.mp3 */; };
+		C78FD6DCB3B1B22C7EB838E0 /* play.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = F198A3B4F87B9F6FB28F0853 /* play.mp3 */; };
+		C95DDFE88B2F8D83EBE584D0 /* gunshot-glock.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5A2E2363684FF487DC2444FB /* gunshot-glock.mp3 */; };
+		CA7F8F2DDA3BAD59954DC0FA /* owl6.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B98566AA801E20225D033CBD /* owl6.mp3 */; };
+		CAF001001 /* owl-1.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001000 /* owl-1.caf */; };
+		CAF001011 /* dolphin-sound.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001010 /* dolphin-sound.caf */; };
+		CAF001021 /* eagle.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001020 /* eagle.caf */; };
+		CAF001031 /* gun-shot.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001030 /* gun-shot.caf */; };
+		CAF001041 /* high-pitch.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001040 /* high-pitch.caf */; };
+		CAF001051 /* owl-2.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001050 /* owl-2.caf */; };
+		CAF001061 /* owl-3.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001060 /* owl-3.caf */; };
+		CAF001071 /* owl-4.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001070 /* owl-4.caf */; };
+		CAF001081 /* owl-5.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001080 /* owl-5.caf */; };
+		CAF001091 /* owl-6.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF001090 /* owl-6.caf */; };
+		CAF0010A1 /* punch-sound.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF0010A0 /* punch-sound.caf */; };
+		CAF0010B1 /* rifle.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF0010B0 /* rifle.caf */; };
+		CAF0010C1 /* the-birdo-attempt.caf in Resources */ = {isa = PBXBuildFile; fileRef = CAF0010C0 /* the-birdo-attempt.caf */; };
+		E025D3D7F31DF273624F4830 /* owl4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5299282053058315231DB940 /* owl4.mp3 */; };
+		E2B4629C45C8DF3E5BB99348 /* owl1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FE356B05D70660B41362F6CA /* owl1.mp3 */; };
 		F39FD72C021805C6F5E4E37B /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A80188F0E6B8DF7C640EC0 /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,17 +72,29 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		123B4B361CD31B5684FEF6AA /* rifle.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = rifle.mp3; path = Sounds/rifle.mp3; sourceTree = "<group>"; };
+		142AFBCD186350115B828745 /* eagle.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = eagle.mp3; path = Sounds/eagle.mp3; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		168A0ED3E97BA3B3116272EF /* dolphin-sound.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = "dolphin-sound.mp3"; path = "Sounds/dolphin-sound.mp3"; sourceTree = "<group>"; };
 		2369B57F76569EDCDCDB712B /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		306BAE4F2E729252001659BE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		306C2EFD2E7014300010F139 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		4E4A35B45814432BE094B514 /* high-pitch-sound.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = "high-pitch-sound.mp3"; path = "Sounds/high-pitch-sound.mp3"; sourceTree = "<group>"; };
 		512CCCEC5A6A6780287668BE /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5299282053058315231DB940 /* owl4.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl4.mp3; path = Sounds/owl4.mp3; sourceTree = "<group>"; };
+		5795EF48B0E0618DF132696B /* punch-sound.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = "punch-sound.mp3"; path = "Sounds/punch-sound.mp3"; sourceTree = "<group>"; };
+		5A2E2363684FF487DC2444FB /* gunshot-glock.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = "gunshot-glock.mp3"; path = "Sounds/gunshot-glock.mp3"; sourceTree = "<group>"; };
 		68E9E3C3EFBD104652651C09 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		6FA94CC7C23F91EF6EFE2BD6 /* the-birdo-1st-attempt.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = "the-birdo-1st-attempt.mp3"; path = "Sounds/the-birdo-1st-attempt.mp3"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7AE5983BDBA54450ED1E0624 /* owl2.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl2.mp3; path = Sounds/owl2.mp3; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7FC3703F96557BEA1F9EE1C3 /* play2.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = play2.mp3; path = Sounds/play2.mp3; sourceTree = "<group>"; };
 		83B502E826F33457CE59683C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
@@ -61,10 +103,29 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A357FA5C1F67AB267488CEBA /* owl3.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl3.mp3; path = Sounds/owl3.mp3; sourceTree = "<group>"; };
 		A3A80188F0E6B8DF7C640EC0 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5ECB19A5C850B65ED1781DF /* owl5.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl5.mp3; path = Sounds/owl5.mp3; sourceTree = "<group>"; };
+		B8AC1285DA0C47EC9D199C3B /* play1.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = play1.mp3; path = Sounds/play1.mp3; sourceTree = "<group>"; };
+		B98566AA801E20225D033CBD /* owl6.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl6.mp3; path = Sounds/owl6.mp3; sourceTree = "<group>"; };
 		BC12DAEDE701E9691218366B /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
+		CAF001000 /* owl-1.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-1.caf"; path = "Sounds/owl-1.caf"; sourceTree = "<group>"; };
+		CAF001010 /* dolphin-sound.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "dolphin-sound.caf"; path = "Sounds/dolphin-sound.caf"; sourceTree = "<group>"; };
+		CAF001020 /* eagle.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = eagle.caf; path = Sounds/eagle.caf; sourceTree = "<group>"; };
+		CAF001030 /* gun-shot.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "gun-shot.caf"; path = "Sounds/gun-shot.caf"; sourceTree = "<group>"; };
+		CAF001040 /* high-pitch.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "high-pitch.caf"; path = "Sounds/high-pitch.caf"; sourceTree = "<group>"; };
+		CAF001050 /* owl-2.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-2.caf"; path = "Sounds/owl-2.caf"; sourceTree = "<group>"; };
+		CAF001060 /* owl-3.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-3.caf"; path = "Sounds/owl-3.caf"; sourceTree = "<group>"; };
+		CAF001070 /* owl-4.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-4.caf"; path = "Sounds/owl-4.caf"; sourceTree = "<group>"; };
+		CAF001080 /* owl-5.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-5.caf"; path = "Sounds/owl-5.caf"; sourceTree = "<group>"; };
+		CAF001090 /* owl-6.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "owl-6.caf"; path = "Sounds/owl-6.caf"; sourceTree = "<group>"; };
+		CAF0010A0 /* punch-sound.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "punch-sound.caf"; path = "Sounds/punch-sound.caf"; sourceTree = "<group>"; };
+		CAF0010B0 /* rifle.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = rifle.caf; path = Sounds/rifle.caf; sourceTree = "<group>"; };
+		CAF0010C0 /* the-birdo-attempt.caf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.caf; name = "the-birdo-attempt.caf"; path = "Sounds/the-birdo-attempt.caf"; sourceTree = "<group>"; };
 		EC4ADA4AFC44B5FE75B0B999 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		F198A3B4F87B9F6FB28F0853 /* play.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = play.mp3; path = Sounds/play.mp3; sourceTree = "<group>"; };
 		FADB421019128F4795A28E32 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		FE356B05D70660B41362F6CA /* owl1.mp3 */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = audio.mp3; name = owl1.mp3; path = Sounds/owl1.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +198,7 @@
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				08F7EFF0300525F3C1556493 /* Pods */,
 				909EA84D88B9F0A4B5B19EA2 /* Frameworks */,
+				306BAE4F2E729252001659BE /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,6 +214,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				306C2EFD2E7014300010F139 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -160,8 +223,45 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				D3FC3843B87660F89C2CA36E /* Sounds */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		D3FC3843B87660F89C2CA36E /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				123B4B361CD31B5684FEF6AA /* rifle.mp3 */,
+				FE356B05D70660B41362F6CA /* owl1.mp3 */,
+				168A0ED3E97BA3B3116272EF /* dolphin-sound.mp3 */,
+				142AFBCD186350115B828745 /* eagle.mp3 */,
+				5A2E2363684FF487DC2444FB /* gunshot-glock.mp3 */,
+				4E4A35B45814432BE094B514 /* high-pitch-sound.mp3 */,
+				7AE5983BDBA54450ED1E0624 /* owl2.mp3 */,
+				A357FA5C1F67AB267488CEBA /* owl3.mp3 */,
+				5299282053058315231DB940 /* owl4.mp3 */,
+				A5ECB19A5C850B65ED1781DF /* owl5.mp3 */,
+				B98566AA801E20225D033CBD /* owl6.mp3 */,
+				F198A3B4F87B9F6FB28F0853 /* play.mp3 */,
+				B8AC1285DA0C47EC9D199C3B /* play1.mp3 */,
+				7FC3703F96557BEA1F9EE1C3 /* play2.mp3 */,
+				5795EF48B0E0618DF132696B /* punch-sound.mp3 */,
+				6FA94CC7C23F91EF6EFE2BD6 /* the-birdo-1st-attempt.mp3 */,
+				CAF001000 /* owl-1.caf */,
+				CAF001010 /* dolphin-sound.caf */,
+				CAF001020 /* eagle.caf */,
+				CAF001030 /* gun-shot.caf */,
+				CAF001040 /* high-pitch.caf */,
+				CAF001050 /* owl-2.caf */,
+				CAF001060 /* owl-3.caf */,
+				CAF001070 /* owl-4.caf */,
+				CAF001080 /* owl-5.caf */,
+				CAF001090 /* owl-6.caf */,
+				CAF0010A0 /* punch-sound.caf */,
+				CAF0010B0 /* rifle.caf */,
+				CAF0010C0 /* the-birdo-attempt.caf */,
+			);
+			name = Sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,8 +362,38 @@
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				306BAE502E729252001659BE /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				180A23CDCA72E921BA74ECCF /* rifle.mp3 in Resources */,
+				E2B4629C45C8DF3E5BB99348 /* owl1.mp3 in Resources */,
+				9D1E716EB16B45FC7451354D /* dolphin-sound.mp3 in Resources */,
+				2E7881E50A86163448F68339 /* eagle.mp3 in Resources */,
+				C95DDFE88B2F8D83EBE584D0 /* gunshot-glock.mp3 in Resources */,
+				95FB633714C0A055EF068F93 /* high-pitch-sound.mp3 in Resources */,
+				9EF7628D7CB7057AED09320E /* owl2.mp3 in Resources */,
+				AB17149AC237541FDA2D0860 /* owl3.mp3 in Resources */,
+				E025D3D7F31DF273624F4830 /* owl4.mp3 in Resources */,
+				BEF4357C097F69C32BFD5765 /* owl5.mp3 in Resources */,
+				CA7F8F2DDA3BAD59954DC0FA /* owl6.mp3 in Resources */,
+				C78FD6DCB3B1B22C7EB838E0 /* play.mp3 in Resources */,
+				5EC6F457D90A81D3CFC5AA7F /* play1.mp3 in Resources */,
+				0048D7CC77A9EE6504B4E2CB /* play2.mp3 in Resources */,
+				BDDE926EC09D545CF9C68A92 /* punch-sound.mp3 in Resources */,
+				A28E15D2BDDEDCAE8BC41B06 /* the-birdo-1st-attempt.mp3 in Resources */,
+				CAF001001 /* owl-1.caf in Resources */,
+				CAF001011 /* dolphin-sound.caf in Resources */,
+				CAF001021 /* eagle.caf in Resources */,
+				CAF001031 /* gun-shot.caf in Resources */,
+				CAF001041 /* high-pitch.caf in Resources */,
+				CAF001051 /* owl-2.caf in Resources */,
+				CAF001061 /* owl-3.caf in Resources */,
+				CAF001071 /* owl-4.caf in Resources */,
+				CAF001081 /* owl-5.caf in Resources */,
+				CAF001091 /* owl-6.caf in Resources */,
+				CAF0010A1 /* punch-sound.caf in Resources */,
+				CAF0010B1 /* rifle.caf in Resources */,
+				CAF0010C1 /* the-birdo-attempt.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,16 +617,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 87Q4XJGA5A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "The Birdo";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.2.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thebirdo.thebirdo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -672,16 +804,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 87Q4XJGA5A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "The Birdo";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.2.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thebirdo.thebirdo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -697,16 +831,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 87Q4XJGA5A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "The Birdo";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.2.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thebirdo.thebirdo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
