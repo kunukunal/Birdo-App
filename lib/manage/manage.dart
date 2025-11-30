@@ -625,6 +625,7 @@ import 'package:birdo/controller/audio_controller.dart';
 import 'package:birdo/controller/dto.dart';
 import 'package:birdo/manage/widget/sechduel.dart' hide formatDate, formatTime;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ScheduleInputView extends StatelessWidget {
@@ -660,164 +661,168 @@ class ScheduleInputView extends StatelessWidget {
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.timer,
-                      color: Color(0xFF34BB91),
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Select Interval',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF34BB91),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                // Minutes Scroller (Centered)
-                Center(
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Select Minutes',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: 200,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: Obx(() => ListWheelScrollView(
-                              itemExtent: 60,
-                              physics: const FixedExtentScrollPhysics(),
-                              onSelectedItemChanged: (index) {
-                                _selectedMinutes.value = index + 1;
-                                // _selectedSeconds.value = 0; // Always 0 seconds
-                                _updateIntervalValue();
-                              },
-                              children: List.generate(60, (index) {
-                                final minutes = index + 1;
-                                final isSelected =
-                                    _selectedMinutes.value == minutes;
-                                return Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    minutes.toString(),
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                      color: isSelected
-                                          ? const Color(0xFF34BB91)
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Display selected interval
-                Obx(() => Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF34BB91).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color:
-                                const Color(0xFF34BB91).withValues(alpha: 0.3)),
-                      ),
-                      child: Text(
-                        'Selected: ${_selectedMinutes.value} minutes',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.timer,
                           color: Color(0xFF34BB91),
-                          fontSize: 16,
+                          size: 24,
                         ),
-                      ),
-                    )),
-                const SizedBox(height: 20),
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: Colors.grey[300]!),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Select Interval',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF34BB91),
                           ),
                         ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // Minutes Scroller (Centered)
+                    Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 180,
+                            height: 210,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: Obx(
+                              () => ListWheelScrollView(
+                                itemExtent: 50,
+                                physics: const FixedExtentScrollPhysics(),
+                                onSelectedItemChanged: (index) {
+                                  _selectedMinutes.value = index + 1;
+                                  _updateIntervalValue();
+                                  // Play a subtle system click sound on scroll
+                                  SystemSound.play(SystemSoundType.click);
+                                },
+                                children: List.generate(60, (index) {
+                                  final minutes = index + 1;
+                                  final isSelected =
+                                      _selectedMinutes.value == minutes;
+                                  return Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      minutes.toString(),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        color: isSelected
+                                            ? const Color(0xFF34BB91)
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Display selected interval
+                    Obx(
+                      () => Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFF34BB91).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color:
+                                const Color(0xFF34BB91).withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Text(
+                          'Selected: ${_selectedMinutes.value} minutes',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF34BB91),
+                            fontSize: 14,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _updateIntervalValue();
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF34BB91),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    const SizedBox(height: 16),
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(color: Colors.grey[300]!),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'Confirm',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _updateIntervalValue();
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF34BB91),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Confirm',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -1647,20 +1652,6 @@ class ScheduleInputView extends StatelessWidget {
           selectedSoundsCopy), // Create another copy to ensure it's not reactive
       interval: int.parse(_interval.value),
     );
-
-    debugPrint(
-        "🔍 DEBUG: schedule.soundPaths after creation: ${schedule.soundPaths}");
-
-    debugPrint("✅ Schedule created:");
-    debugPrint("   Start Date: ${schedule.formattedDate}");
-    debugPrint(
-        "   End Date: ${schedule.endDate != null ? formatDate(schedule.endDate!) : 'Same as start'}");
-    debugPrint("   Start Time: ${schedule.formattedStartTime}");
-    debugPrint("   End Time: ${schedule.formattedEndTime}");
-    debugPrint("   Sound: ${schedule.soundDisplayName}");
-    final minutes = schedule.interval;
-    debugPrint(
-        "   Interval: ${schedule.interval} seconds (${minutes} minutes)");
 
     controller.addSchedule(schedule);
 

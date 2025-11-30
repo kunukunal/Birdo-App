@@ -46,12 +46,12 @@
         <!-- Add this metadata for default notification channel -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="high_importance_channel" />
+            android:value="default_channel" />
 
-        <!-- Optional: Default notification icon -->
-<!--        <meta-data-->
-<!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
-<!--            android:resource="@drawable/ic_notification" />-->
+        <!-- Default notification icon to ensure consistent appearance for system notifications -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher_monochrome" />
 
         <!-- Optional: Default notification color -->
 <!--        <meta-data-->
@@ -61,6 +61,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
     </application>
 
     <queries>

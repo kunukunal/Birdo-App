@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -8,9 +9,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling background message: ${message.messageId}");
+  print(
+      "Handling background channelId: ${message.notification?.android?.channelId}");
+  print(
+      "Handling background channelName: ${message.notification?.android.toString()}");
+  print(
+      "Handling background priority: ${message.notification?.android?.priority}");
+  print("Handling background message: ${message.notification?.title}");
   print("Handling background message: ${message.data.entries}");
-  await NotificationService.showNotification(message);
+  await NotificationService.handleMessage(
+    message,
+    fromBackgroundHandler: true,
+  );
   // Background notifications will use Android's built-in notification channels
   // with raw resource sounds - no need for custom audio player here
 }
@@ -115,7 +125,7 @@ class NotificationService {
 
     // Listen for foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      showNotification(message);
+      handleMessage(message, fromBackgroundHandler: false);
     });
 
     // Listen when app opened by notification
@@ -137,15 +147,38 @@ class NotificationService {
     // Handle navigation or other actions when notification is tapped
   }
 
+  static Future<void> handleMessage(RemoteMessage message,
+      {required bool fromBackgroundHandler}) async {
+    final bool hasNotificationPayload = message.notification != null;
+    if (fromBackgroundHandler && hasNotificationPayload) {
+      print(
+          'Skipping local notification: system notification already shown for payload with notification block.');
+      return;
+    }
+    await showNotification(message);
+  }
+
   /// Show local notification with custom sound
   static Future<void> showNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
-
+    print("Message Data: ${message.data}");
+    // print("Message Notification: ${notification?.payload}");
+    print("Message Notification: ${notification?.title}");
+    print("Message Notification: ${notification?.body}");
+    print("Message id: ${message.data['sound_id']}");
+    // print("Message Notification: ${notification?.android}");
+    // print("Message Notification: ${notification?.ios}");
+    // print("Message Notification: ${notification?.androidChannelId}");
+    // print("Message Notification: ${notification?.iosChannelId}");
+    // print("Message Notification: ${notification?.androidChannelName}");
+    // print("Message Notification: ${notification?.iosChannelName}");
     if (notification != null) {
       // Decide channel by data.sound (e.g., "rifle" or "owl1").
       // If not provided or unrecognized, use default channel.
       final String? rawSoundParam = message.data['sound'];
-      final String? soundIdParam = message.data['sound_id'];
+      // print("Raw Sound Param: $rawSoundParam");
+      final dynamic soundIdParam = message.data['sound_id'];
+      // print("Sound Id Param: $soundIdParam");
       final String? normalizedKey = _normalizeSoundKey(rawSoundParam);
       final Map<String, dynamic>? soundEntry =
           _selectSoundEntry(normalizedKey, soundIdParam);
@@ -155,6 +188,19 @@ class NotificationService {
       final String channelName = soundEntry != null
           ? 'Sound: ${soundEntry['key']}'
           : 'Default Notifications';
+
+      await _ensureChannelExists(
+        channelId: channelId,
+        channelName: channelName,
+        description: soundEntry != null
+            ? 'Notifications that play ${soundEntry['key']} sound'
+            : 'Default notification channel',
+        androidSound: soundEntry != null
+            ? RawResourceAndroidNotificationSound(
+                soundEntry['android'] as String,
+              )
+            : null,
+      );
 
       // Android notification details
       AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
@@ -166,17 +212,18 @@ class NotificationService {
         showWhen: false,
         // Let the channel decide the sound; playSound should be true to use channel sound
         playSound: true,
+        icon: '@mipmap/ic_launcher_monochrome',
       );
 
       // iOS notification details - use bundled sound files
       String? iosSound =
           soundEntry != null ? soundEntry['ios'] as String : null;
 
-      print("iOS Sound Debug:");
-      print("  soundEntry: $soundEntry");
-      print("  iosSound: $iosSound");
-      print("  rawSoundParam: $rawSoundParam");
-      print("  soundIdParam: $soundIdParam");
+      // print("iOS Sound Debug:");
+      // print("  soundEntry: $soundEntry");
+      // print("  iosSound: $iosSound");
+      // print("  rawSoundParam: $rawSoundParam");
+      // print("  soundIdParam: $soundIdParam");
 
       DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
@@ -265,19 +312,97 @@ class NotificationService {
     return v.isEmpty ? null : v;
   }
 
-  static Map<String, dynamic>? _selectSoundEntry(String? key, String? idStr) {
+  static Map<String, dynamic>? _selectSoundEntry(String? key, dynamic idParam) {
     if (key != null) {
       final Map<String, dynamic>? byKey = _soundLookup[key];
       if (byKey != null) return byKey;
     }
-    if (idStr != null) {
-      final int? id = int.tryParse(idStr);
-      if (id != null) {
-        for (final e in _soundCatalog) {
-          if (e['id'] == id) return e;
-        }
+    for (final int id in _extractSoundIds(idParam)) {
+      for (final e in _soundCatalog) {
+        if (e['id'] == id) return e;
       }
     }
     return null;
+  }
+
+  static List<int> _extractSoundIds(dynamic raw) {
+    if (raw == null) return const <int>[];
+
+    if (raw is int) return [raw];
+
+    if (raw is List) {
+      final List<int> ids = [];
+      for (final element in raw) {
+        final int? parsed = _coerceToInt(element);
+        if (parsed != null) ids.add(parsed);
+      }
+      return ids;
+    }
+
+    if (raw is String) {
+      final String value = raw.trim();
+      if (value.isEmpty) return const <int>[];
+
+      if (value.startsWith('[') && value.endsWith(']')) {
+        try {
+          final dynamic decoded = jsonDecode(value);
+          return _extractSoundIds(decoded);
+        } catch (_) {
+          // fall through to other parsing strategies
+        }
+      }
+
+      if (value.contains(',')) {
+        final List<int> ids = [];
+        for (final part in value.split(',')) {
+          final int? parsed = int.tryParse(part.trim());
+          if (parsed != null) ids.add(parsed);
+        }
+        if (ids.isNotEmpty) return ids;
+      }
+
+      final int? single = int.tryParse(value);
+      if (single != null) return [single];
+    }
+
+    return const <int>[];
+  }
+
+  static int? _coerceToInt(dynamic raw) {
+    if (raw is int) return raw;
+    if (raw is String) return int.tryParse(raw.trim());
+    if (raw is double) return raw.toInt();
+    return null;
+  }
+
+  static Future<void> _ensureChannelExists({
+    required String channelId,
+    required String channelName,
+    required String description,
+    RawResourceAndroidNotificationSound? androidSound,
+  }) async {
+    if (!Platform.isAndroid) return;
+    final androidPlugin =
+        _localNotifications.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+
+    // Delete stale channel (required to update sound on Android 8+)
+    try {
+      await androidPlugin.deleteNotificationChannel(channelId);
+    } catch (_) {
+      // Safe to ignore if channel doesn't exist yet
+    }
+
+    final AndroidNotificationChannel channel = AndroidNotificationChannel(
+      channelId,
+      channelName,
+      description: description,
+      importance: Importance.max,
+      playSound: true,
+      sound: androidSound,
+    );
+
+    await androidPlugin.createNotificationChannel(channel);
   }
 }

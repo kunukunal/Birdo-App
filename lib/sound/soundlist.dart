@@ -26,6 +26,7 @@ class _SoundlistState extends State<Soundlist> {
   String? currentlyPlayingPath;
   bool isPlaying = false;
   bool isLoading = false;
+  String? loadingSoundPath;
 
   // Default local sounds (fallback)
   final List<Map<String, dynamic>> defaultSounds = [
@@ -124,6 +125,7 @@ class _SoundlistState extends State<Soundlist> {
           currentlyPlayingPath = null;
           isPlaying = false;
           isLoading = false;
+          loadingSoundPath = null;
         });
       }
     });
@@ -137,6 +139,10 @@ class _SoundlistState extends State<Soundlist> {
             currentlyPlayingPath = null;
             isPlaying = false;
             isLoading = false;
+            loadingSoundPath = null;
+          } else if (state == PlayerState.playing) {
+            isLoading = false;
+            loadingSoundPath = null;
           }
         });
       }
@@ -372,6 +378,9 @@ class _SoundlistState extends State<Soundlist> {
     String audioPath;
     audioPath = soundData['url'] ?? '';
 
+    // Determine loader visibility
+    bool isThisSoundLoading = loadingSoundPath == audioPath && isLoading;
+
     // Check if this sound is currently playing
     bool isThisSoundPlaying = currentlyPlayingPath == audioPath && isPlaying;
 
@@ -382,14 +391,17 @@ class _SoundlistState extends State<Soundlist> {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: isLoading ? null : () => _toggleAudio(audioPath),
+              onTap: isThisSoundLoading ? null : () => _toggleAudio(audioPath),
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(
-                      color: isLoading ? Colors.grey : const Color(0xFF34BB91)),
+                      color: isThisSoundLoading
+                          ? Colors.grey
+                          : const Color(0xFF34BB91)),
                   borderRadius: BorderRadius.circular(30),
-                  color: isLoading ? Colors.grey[100] : Colors.grey[50],
+                  color:
+                      isThisSoundLoading ? Colors.grey[100] : Colors.grey[50],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -409,7 +421,7 @@ class _SoundlistState extends State<Soundlist> {
                                 name,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isLoading
+                                  color: isThisSoundLoading
                                       ? Colors.grey
                                       : const Color(0xFF34BB91),
                                 ),
@@ -419,7 +431,7 @@ class _SoundlistState extends State<Soundlist> {
                           ],
                         ),
                       ),
-                      if (isLoading)
+                      if (isThisSoundLoading)
                         const SizedBox(
                           width: 20,
                           height: 20,
@@ -456,6 +468,7 @@ class _SoundlistState extends State<Soundlist> {
         // Set loading state
         setState(() {
           isLoading = true;
+          loadingSoundPath = path;
         });
 
         // Stop any currently playing audio
@@ -475,6 +488,7 @@ class _SoundlistState extends State<Soundlist> {
         setState(() {
           currentlyPlayingPath = path;
           isLoading = false;
+          loadingSoundPath = null;
         });
       }
     } catch (e) {
@@ -486,6 +500,7 @@ class _SoundlistState extends State<Soundlist> {
         currentlyPlayingPath = null;
         isPlaying = false;
         isLoading = false;
+        loadingSoundPath = null;
       });
     }
   }

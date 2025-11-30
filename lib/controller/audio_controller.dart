@@ -489,6 +489,7 @@ class AudioSchedulerController extends GetxController {
   RxBool isPlaying = false.obs;
   RxBool isLoadingSounds = false.obs;
   RxBool isLoadingSchedules = false.obs;
+  RxBool isUpdatingPlayStatus = false.obs;
 
   final Map<AudioSchedule, Timer> _timers = {};
   final Map<AudioSchedule, AudioPlayer> _players = {};
@@ -518,6 +519,12 @@ class AudioSchedulerController extends GetxController {
 
   // API: Get schedules from server
   Future<void> loadSchedulesFromApi() async {
+    // Prevent concurrent calls
+    if (isLoadingSchedules.value) {
+      debugPrint('loadSchedulesFromApi already in progress, skipping...');
+      return;
+    }
+
     isLoadingSchedules.value = true;
     try {
       String? token = await _getAuthToken();
@@ -937,6 +944,13 @@ class AudioSchedulerController extends GetxController {
       return;
     }
 
+    // Prevent adding schedule while loading schedules
+    // if (isLoadingSchedules.value) {
+    //   Get.snackbar('Please wait',
+    //       'Schedules are being loaded. Please try again in a moment.');
+    //   return;
+    // }
+
     // Show loading indicator
     Get.dialog(
       const Center(
@@ -956,7 +970,10 @@ class AudioSchedulerController extends GetxController {
       // Create schedule on API first
       bool success = await createScheduleOnApi(schedule);
 
-      Get.back(); // Close loading dialog
+      // Close loading dialog safely
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
 
       if (success) {
         // Reload schedules from API to get the updated list with IDs
@@ -964,7 +981,10 @@ class AudioSchedulerController extends GetxController {
         Get.snackbar('Success', 'Schedule created successfully');
       }
     } catch (e) {
-      Get.back(); // Close loading dialog
+      // Close loading dialog safely
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
       debugPrint("Error adding schedule: $e");
       Get.snackbar('Error', 'Failed to create schedule');
     }
@@ -1045,7 +1065,10 @@ class AudioSchedulerController extends GetxController {
       // Delete from API first
       bool success = await deleteScheduleFromApi(schedule.id!);
 
-      Get.back(); // Close loading dialog
+      // Close loading dialog safely
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
 
       if (success) {
         // Remove locally
@@ -1058,10 +1081,17 @@ class AudioSchedulerController extends GetxController {
         debugPrint(
             "Schedule removed. Remaining schedules: ${schedules.length}");
         _updatePlayingStatus();
-        Get.snackbar('Success', 'Schedule deleted successfully');
+        // Get.snackbar('Success', 'Schedule deleted successfully',
+        //     duration: Duration(seconds: 2));
+
+        // Reload schedules from API to ensure consistency
+        await loadSchedulesFromApi();
       }
     } catch (e) {
-      Get.back(); // Close loading dialog
+      // Close loading dialog safely
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
       debugPrint("Error removing schedule: $e");
       Get.snackbar('Error', 'Failed to delete schedule');
     }
@@ -1094,64 +1124,74 @@ class AudioSchedulerController extends GetxController {
     }
   }
 
-  void togglePlayPause() async {
+  void togglePlayPause() {
+    if (isUpdatingPlayStatus.value) {
+      debugPrint("Play status update already in progress");
+      return;
+    }
+
     if (schedules.isEmpty) {
       debugPrint("No schedules available to play/pause");
       return;
     }
 
-    // Show loading indicator
-    Get.dialog(
-      const Center(
-        child: CircularProgressIndicator(),
-      ),
-      barrierDismissible: false,
-    );
+    isUpdatingPlayStatus.value = true;
 
-    try {
-      bool newActiveState;
+    Get.showOverlay(
+      asyncFunction: () async {
+        try {
+          bool newActiveState;
 
-      if (isPaused.value) {
-        // Resume
-        newActiveState = true;
-        debugPrint("Attempting to resume schedules via API");
-      } else if (isPlaying.value) {
-        // Pause
-        newActiveState = false;
-        debugPrint("Attempting to pause schedules via API");
-      } else {
-        // Start
-        newActiveState = true;
-        debugPrint("Attempting to start schedules via API");
-      }
-
-      // Update status on API first
-      bool success = await updatePlayStatusOnApi(newActiveState);
-
-      Get.back(); // Close loading dialog
-
-      if (success) {
-        // Update local state based on the new active state
-        if (newActiveState) {
           if (isPaused.value) {
-            resumeAllSchedulesLocal();
+            // Resume
+            newActiveState = true;
+            debugPrint("Attempting to resume schedules via API");
+          } else if (isPlaying.value) {
+            // Pause
+            newActiveState = false;
+            debugPrint("Attempting to pause schedules via API");
           } else {
-            startAllSchedulesLocal();
+            // Start
+            newActiveState = true;
+            debugPrint("Attempting to start schedules via API");
           }
-        } else {
-          pauseAllSchedulesLocal();
-        }
 
-        Get.snackbar('Success',
-            newActiveState ? 'Schedules activated' : 'Schedules paused');
-      } else {
-        Get.snackbar('Error', 'Failed to update schedule status on server');
-      }
-    } catch (e) {
-      Get.back(); // Close loading dialog
-      debugPrint("Error toggling play/pause: $e");
-      Get.snackbar('Error', 'Failed to update schedule status');
-    }
+          // Update status on API first
+          bool success = await updatePlayStatusOnApi(newActiveState);
+
+          if (success) {
+            // Update local state based on the new active state
+            if (newActiveState) {
+              if (isPaused.value) {
+                // resumeAllSchedulesLocal();
+                isPaused.value = false;
+                isPlaying.value = true;
+              } else {
+                isPaused.value = false;
+                isPlaying.value = true;
+                // startAllSchedulesLocal();
+              }
+            } else {
+              isPaused.value = true;
+              isPlaying.value = false;
+              // pauseAllSchedulesLocal();
+            }
+
+            Get.snackbar('Success',
+                newActiveState ? 'Schedules activated' : 'Schedules paused');
+          } else {
+            Get.snackbar('Error', 'Failed to update schedule status on server');
+          }
+        } catch (e) {
+          debugPrint("Error toggling play/pause: $e");
+          Get.snackbar('Error', 'Failed to update schedule status');
+        } finally {
+          isUpdatingPlayStatus.value = false;
+        }
+      },
+      loadingWidget: const Center(child: CircularProgressIndicator()),
+      opacity: 0,
+    );
   }
 
   void pauseAllSchedules() async {
@@ -1169,7 +1209,9 @@ class AudioSchedulerController extends GetxController {
       Get.back(); // Close loading dialog
 
       if (success) {
-        pauseAllSchedulesLocal();
+        isPaused.value = true;
+        isPlaying.value = false;
+        // pauseAllSchedulesLocal();
         Get.snackbar('Success', 'All schedules paused');
       } else {
         Get.snackbar('Error', 'Failed to pause schedules on server');
@@ -1196,7 +1238,9 @@ class AudioSchedulerController extends GetxController {
       Get.back(); // Close loading dialog
 
       if (success) {
-        resumeAllSchedulesLocal();
+        isPaused.value = false;
+        isPlaying.value = true;
+        // resumeAllSchedulesLocal();
         Get.snackbar('Success', 'All schedules resumed');
       } else {
         Get.snackbar('Error', 'Failed to resume schedules on server');
@@ -1223,7 +1267,9 @@ class AudioSchedulerController extends GetxController {
       Get.back(); // Close loading dialog
 
       if (success) {
-        startAllSchedulesLocal();
+        isPaused.value = false;
+        isPlaying.value = true;
+        // startAllSchedulesLocal();
         Get.snackbar('Success', 'All schedules started');
       } else {
         Get.snackbar('Error', 'Failed to start schedules on server');
