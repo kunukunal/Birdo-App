@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:birdo/utils/app_snackbar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -123,12 +124,7 @@ class _OtpScreenState extends State<OtpScreen> {
         if (!mounted) return;
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(responseBody['message']),
-            backgroundColor: Color(0xFF34BB91),
-          ),
-        );
+        AppSnackBar.adaptive('success', responseBody['message']);
 
         // Navigate to main app
         Navigator.pushAndRemoveUntil(
@@ -196,12 +192,7 @@ class _OtpScreenState extends State<OtpScreen> {
         _startResendTimer();
         _clearOtpFields();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('OTP sent successfully'),
-              backgroundColor: Color(0xFF34BB91),
-            ),
-          );
+          AppSnackBar.adaptive('success', 'OTP sent successfully');
         }
       } else if (response.statusCode == 404) {
         _showErrorDialog("User not found");

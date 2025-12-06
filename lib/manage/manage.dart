@@ -18,7 +18,7 @@
 //
 //   void _refreshSounds() async {
 //     await controller.refreshSounds();
-//     Get.snackbar('Refreshed', 'Sound list updated');
+//     AppSnackBar.adaptive('Refreshed', 'Sound list updated');
 //   }
 //
 //   @override
@@ -494,32 +494,32 @@
 //
 //     if (_selectedStartDate.value == null) {
 //       debugPrint("❌ No date selected");
-//       Get.snackbar('Error', 'Please select a date');
+//       AppSnackBar.adaptive('Error', 'Please select a date');
 //       return;
 //     }
 //
 //     if (_startTime.value == null) {
 //       debugPrint("❌ No start time selected");
-//       Get.snackbar('Error', 'Please select a start time');
+//       AppSnackBar.adaptive('Error', 'Please select a start time');
 //       return;
 //     }
 //
 //     if (_endTime.value == null) {
 //       debugPrint("❌ No end time selected");
-//       Get.snackbar('Error', 'Please select an end time');
+//       AppSnackBar.adaptive('Error', 'Please select an end time');
 //       return;
 //     }
 //
 //     if (_selectedSound.value.isEmpty) {
 //       debugPrint("❌ No sound selected");
-//       Get.snackbar('Error', 'Please select a sound');
+//       AppSnackBar.adaptive('Error', 'Please select a sound');
 //       return;
 //     }
 //
 //     if (int.tryParse(_interval.value) == null ||
 //         int.parse(_interval.value) <= 0) {
 //       debugPrint("❌ Invalid interval: ${_interval.value}");
-//       Get.snackbar('Error', 'Please enter a valid interval in minutes');
+//       AppSnackBar.adaptive('Error', 'Please enter a valid interval in minutes');
 //       return;
 //     }
 //
@@ -549,7 +549,7 @@
 //     _interval.value = '';
 //     _intervalController.clear();
 //
-//     Get.snackbar('Success', 'Schedule added for ${schedule.formattedDate}');
+//     AppSnackBar.adaptive('Success', 'Schedule added for ${schedule.formattedDate}');
 //   }
 //
 //   Future<void> _pickTime(BuildContext context, Rx<TimeOfDay?> target) async {
@@ -624,6 +624,7 @@
 import 'package:birdo/controller/audio_controller.dart';
 import 'package:birdo/controller/dto.dart';
 import 'package:birdo/manage/widget/sechduel.dart' hide formatDate, formatTime;
+import 'package:birdo/utils/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -645,7 +646,7 @@ class ScheduleInputView extends StatelessWidget {
 
   void _refreshSounds() async {
     await controller.refreshSounds();
-    Get.snackbar('Refreshed', 'Sound list updated');
+    AppSnackBar.adaptive('Refreshed', 'Sound list updated');
   }
 
   void _updateIntervalValue() {
@@ -1045,7 +1046,8 @@ class ScheduleInputView extends StatelessWidget {
     // 1. Start time should be before end time
     if (startMinutes >= endMinutes) {
       debugPrint("❌ Start time must be before end time");
-      Get.snackbar('Invalid Time', 'Start time must be before end time');
+      AppSnackBar.adaptive(
+          'Invalid Time', 'Start time must be before end time');
       return false;
     }
 
@@ -1056,14 +1058,16 @@ class ScheduleInputView extends StatelessWidget {
       // Same day: start time must be before end time
       if (startMinutes >= endMinutes) {
         debugPrint("❌ Start time must be before end time on the same day");
-        Get.snackbar('Invalid Time', 'Start time must be before end time');
+        AppSnackBar.adaptive(
+            'Invalid Time', 'Start time must be before end time');
         return false;
       }
     } else {
       // Different days: end date must be after start date
       if (endDate.isBefore(startDate)) {
         debugPrint("❌ End date must be after start date");
-        Get.snackbar('Invalid Date', 'End date must be after start date');
+        AppSnackBar.adaptive(
+            'Invalid Date', 'End date must be after start date');
         return false;
       }
     }
@@ -1078,7 +1082,8 @@ class ScheduleInputView extends StatelessWidget {
       final currentMinutes = now.hour * 60 + now.minute;
       if (startMinutes <= currentMinutes) {
         debugPrint("❌ Cannot schedule for past time today");
-        Get.snackbar('Invalid Time', 'Cannot schedule for past time today');
+        AppSnackBar.adaptive(
+            'Invalid Time', 'Cannot schedule for past time today');
         return false;
       }
     }
@@ -1087,7 +1092,7 @@ class ScheduleInputView extends StatelessWidget {
     final oneYearFromNow = now.add(const Duration(days: 365));
     if (startDate.isAfter(oneYearFromNow)) {
       debugPrint("❌ Cannot schedule more than 1 year in advance");
-      Get.snackbar(
+      AppSnackBar.adaptive(
           'Invalid Date', 'Cannot schedule more than 1 year in advance');
       return false;
     }
@@ -1096,14 +1101,14 @@ class ScheduleInputView extends StatelessWidget {
     final timeDifference = endMinutes - startMinutes;
     // if (timeDifference < 5) {
     //   debugPrint("❌ Time range must be at least 5 minutes");
-    //   Get.snackbar('Invalid Time', 'Time range must be at least 5 minutes');
+    //   AppSnackBar.adaptive('Invalid Time', 'Time range must be at least 5 minutes');
     //   return false;
     // }
 
     // 6. Check if the time range is too long (maximum 24 hours)
     if (timeDifference > 24 * 60) {
       debugPrint("❌ Time range cannot exceed 24 hours");
-      Get.snackbar('Invalid Time', 'Time range cannot exceed 24 hours');
+      AppSnackBar.adaptive('Invalid Time', 'Time range cannot exceed 24 hours');
       return false;
     }
 
@@ -1164,7 +1169,8 @@ class ScheduleInputView extends StatelessWidget {
                             ? null
                             : () async {
                                 await controller.loadSchedulesFromApi();
-                                Get.snackbar('Refreshed', 'Schedules updated');
+                                AppSnackBar.adaptive(
+                                    'Refreshed', 'Schedules updated');
                               },
                         tooltip: 'Refresh schedules',
                       )),
@@ -1593,25 +1599,25 @@ class ScheduleInputView extends StatelessWidget {
 
     if (_selectedStartDate.value == null) {
       debugPrint("❌ No start date selected");
-      Get.snackbar('Error', 'Please select a start date');
+      AppSnackBar.adaptive('Error', 'Please select a start date');
       return;
     }
 
     if (_selectedEndDate.value == null) {
       debugPrint("❌ No end date selected");
-      Get.snackbar('Error', 'Please select an end date');
+      AppSnackBar.adaptive('Error', 'Please select an end date');
       return;
     }
 
     if (_startTime.value == null) {
       debugPrint("❌ No start time selected");
-      Get.snackbar('Error', 'Please select a start time');
+      AppSnackBar.adaptive('Error', 'Please select a start time');
       return;
     }
 
     if (_endTime.value == null) {
       debugPrint("❌ No end time selected");
-      Get.snackbar('Error', 'Please select an end time');
+      AppSnackBar.adaptive('Error', 'Please select an end time');
       return;
     }
 
@@ -1622,14 +1628,14 @@ class ScheduleInputView extends StatelessWidget {
 
     if (_selectedSounds.isEmpty) {
       debugPrint("❌ No sounds selected");
-      Get.snackbar('Error', 'Please select at least one sound');
+      AppSnackBar.adaptive('Error', 'Please select at least one sound');
       return;
     }
 
     if (int.tryParse(_interval.value) == null ||
         int.parse(_interval.value) <= 0) {
       debugPrint("❌ Invalid interval: ${_interval.value}");
-      Get.snackbar('Error', 'Please select a valid interval');
+      AppSnackBar.adaptive('Error', 'Please select a valid interval');
       return;
     }
 

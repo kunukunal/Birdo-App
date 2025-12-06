@@ -37,19 +37,23 @@ android {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
 
-//    signingConfigs {
-//        release {
-//            storeFile file(keystoreProperties['storeFile'])
-//            storePassword keystoreProperties['storePassword']
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//        }
-//    }
+    signingConfigs {
+        release {
+            def storeFilePath = keystoreProperties['storeFile']
+            if (storeFilePath) {
+                storeFile file(storeFilePath)
+            } else {
+                storeFile file('key.jks')
+            }
+            storePassword keystoreProperties['storePassword'] ?: ''
+            keyAlias keystoreProperties['keyAlias'] ?: ''
+            keyPassword keystoreProperties['keyPassword'] ?: ''
+        }
+    }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

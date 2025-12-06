@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:birdo/utils/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -131,12 +132,7 @@ class _LoginState extends State<Login> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(responseData['message']),
-              backgroundColor: Color(0xFF34BB91),
-            ),
-          );
+          AppSnackBar.adaptive('success', responseData['message']);
 
           // Navigate to OTP screen
           Navigator.push(

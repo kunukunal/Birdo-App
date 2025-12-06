@@ -82,15 +82,15 @@
 //         }
 //       } else if (response.statusCode == 401) {
 //         debugPrint('Unauthenticated: ${response.body}');
-//         Get.snackbar('Error', 'Authentication failed. Please login again.');
+//         AppSnackBar.adaptive('Error', 'Authentication failed. Please login again.');
 //       } else {
 //         debugPrint(
 //             'Error fetching sounds: ${response.statusCode} - ${response.body}');
-//         Get.snackbar('Error', 'Failed to load sounds from server.');
+//         AppSnackBar.adaptive('Error', 'Failed to load sounds from server.');
 //       }
 //     } catch (e) {
 //       debugPrint('Exception while fetching API sounds: $e');
-//       Get.snackbar('Error', 'Network error. Please check your connection.');
+//       AppSnackBar.adaptive('Error', 'Network error. Please check your connection.');
 //     }
 //   }
 //
@@ -122,7 +122,7 @@
 //     debugPrint("Today's date: ${_formatDate(today)}");
 //
 //     if (scheduleDate.isBefore(today)) {
-//       Get.snackbar('Error', 'Cannot schedule for past dates');
+//       AppSnackBar.adaptive('Error', 'Cannot schedule for past dates');
 //       return;
 //     }
 //
@@ -392,7 +392,7 @@
 //       debugPrint("🎵 Audio played successfully: ${getSoundDisplayName(path)}");
 //     } catch (e) {
 //       debugPrint("❌ Audio play error: $e");
-//       Get.snackbar(
+//       AppSnackBar.adaptive(
 //           'Error', 'Failed to play audio: ${getSoundDisplayName(path)}');
 //     }
 //   }
@@ -477,6 +477,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:birdo/controller/dto.dart';
+import 'package:birdo/utils/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -532,7 +533,8 @@ class AudioSchedulerController extends GetxController {
 
       if (token == null || userId == null) {
         debugPrint('No auth token or user ID found for loading schedules');
-        Get.snackbar('Error', 'Authentication required. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication required. Please login again.');
         return;
       }
 
@@ -592,15 +594,17 @@ class AudioSchedulerController extends GetxController {
         }
       } else if (response.statusCode == 401) {
         debugPrint('Unauthenticated: ${response.body}');
-        Get.snackbar('Error', 'Authentication failed. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication failed. Please login again.');
       } else {
         debugPrint(
             'Error fetching schedules: ${response.statusCode} - ${response.body}');
-        Get.snackbar('Error', 'Failed to load schedules from server.');
+        AppSnackBar.adaptive('Error', 'Failed to load schedules from server.');
       }
     } catch (e) {
       debugPrint('Exception while fetching schedules: $e');
-      Get.snackbar('Error', 'Network error. Please check your connection.');
+      AppSnackBar.adaptive(
+          'Error', 'Network error. Please check your connection.');
     } finally {
       isLoadingSchedules.value = false;
     }
@@ -697,7 +701,8 @@ class AudioSchedulerController extends GetxController {
 
       if (token == null || userId == null) {
         debugPrint('No auth token or user ID found for creating schedule');
-        Get.snackbar('Error', 'Authentication required. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication required. Please login again.');
         return false;
       }
 
@@ -726,7 +731,7 @@ class AudioSchedulerController extends GetxController {
 
       if (soundIds.isEmpty) {
         debugPrint('No valid sounds found');
-        Get.snackbar('Error', 'No valid sounds found');
+        AppSnackBar.adaptive('Error', 'No valid sounds found');
         return false;
       }
 
@@ -765,12 +770,14 @@ class AudioSchedulerController extends GetxController {
       } else {
         debugPrint(
             'Error creating schedule: ${response.statusCode} - ${response.body}');
-        Get.snackbar('Error', data['message'] ?? 'Failed to create schedule');
+        AppSnackBar.adaptive(
+            'Error', data['message'] ?? 'Failed to create schedule');
         return false;
       }
     } catch (e) {
       debugPrint('Exception while creating schedule: $e');
-      Get.snackbar('Error', 'Network error. Please check your connection.');
+      AppSnackBar.adaptive(
+          'Error', 'Network error. Please check your connection.');
       return false;
     }
   }
@@ -782,7 +789,8 @@ class AudioSchedulerController extends GetxController {
 
       if (token == null) {
         debugPrint('No auth token found for deleting schedule');
-        Get.snackbar('Error', 'Authentication required. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication required. Please login again.');
         return false;
       }
 
@@ -800,12 +808,13 @@ class AudioSchedulerController extends GetxController {
       } else {
         debugPrint(
             'Error deleting schedule: ${response.statusCode} - ${response.body}');
-        Get.snackbar('Error', 'Failed to delete schedule from server');
+        AppSnackBar.adaptive('Error', 'Failed to delete schedule from server');
         return false;
       }
     } catch (e) {
       debugPrint('Exception while deleting schedule: $e');
-      Get.snackbar('Error', 'Network error. Please check your connection.');
+      AppSnackBar.adaptive(
+          'Error', 'Network error. Please check your connection.');
       return false;
     }
   }
@@ -818,7 +827,8 @@ class AudioSchedulerController extends GetxController {
 
       if (token == null || userId == null) {
         debugPrint('No auth token or user ID found for updating play status');
-        Get.snackbar('Error', 'Authentication required. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication required. Please login again.');
         return false;
       }
 
@@ -846,13 +856,14 @@ class AudioSchedulerController extends GetxController {
         debugPrint(
             'Error updating play status: ${response.statusCode} - ${response.body}');
         final errorData = json.decode(response.body);
-        Get.snackbar(
+        AppSnackBar.adaptive(
             'Error', errorData['message'] ?? 'Failed to update play status');
         return false;
       }
     } catch (e) {
       debugPrint('Exception while updating play status: $e');
-      Get.snackbar('Error', 'Network error. Please check your connection.');
+      AppSnackBar.adaptive(
+          'Error', 'Network error. Please check your connection.');
       return false;
     }
   }
@@ -898,15 +909,17 @@ class AudioSchedulerController extends GetxController {
         }
       } else if (response.statusCode == 401) {
         debugPrint('Unauthenticated: ${response.body}');
-        Get.snackbar('Error', 'Authentication failed. Please login again.');
+        AppSnackBar.adaptive(
+            'Error', 'Authentication failed. Please login again.');
       } else {
         debugPrint(
             'Error fetching sounds: ${response.statusCode} - ${response.body}');
-        Get.snackbar('Error', 'Failed to load sounds from server.');
+        AppSnackBar.adaptive('Error', 'Failed to load sounds from server.');
       }
     } catch (e) {
       debugPrint('Exception while fetching API sounds: $e');
-      Get.snackbar('Error', 'Network error. Please check your connection.');
+      AppSnackBar.adaptive(
+          'Error', 'Network error. Please check your connection.');
     }
   }
 
@@ -940,13 +953,13 @@ class AudioSchedulerController extends GetxController {
     debugPrint("Today's date: ${_formatDate(today)}");
 
     if (scheduleDate.isBefore(today)) {
-      Get.snackbar('Error', 'Cannot schedule for past dates');
+      AppSnackBar.adaptive('Error', 'Cannot schedule for past dates');
       return;
     }
 
     // Prevent adding schedule while loading schedules
     // if (isLoadingSchedules.value) {
-    //   Get.snackbar('Please wait',
+    //   AppSnackBar.adaptive('Please wait',
     //       'Schedules are being loaded. Please try again in a moment.');
     //   return;
     // }
@@ -978,7 +991,7 @@ class AudioSchedulerController extends GetxController {
       if (success) {
         // Reload schedules from API to get the updated list with IDs
         await loadSchedulesFromApi();
-        Get.snackbar('Success', 'Schedule created successfully');
+        AppSnackBar.adaptive('Success', 'Schedule created successfully');
       }
     } catch (e) {
       // Close loading dialog safely
@@ -986,7 +999,7 @@ class AudioSchedulerController extends GetxController {
         Get.back();
       }
       debugPrint("Error adding schedule: $e");
-      Get.snackbar('Error', 'Failed to create schedule');
+      AppSnackBar.adaptive('Error', 'Failed to create schedule');
     }
   }
 
@@ -994,7 +1007,7 @@ class AudioSchedulerController extends GetxController {
   void removeSchedule(AudioSchedule schedule) async {
     if (schedule.id == null) {
       debugPrint('Cannot delete schedule without ID');
-      Get.snackbar('Error', 'Cannot delete schedule');
+      AppSnackBar.adaptive('Error', 'Cannot delete schedule');
       return;
     }
 
@@ -1081,7 +1094,7 @@ class AudioSchedulerController extends GetxController {
         debugPrint(
             "Schedule removed. Remaining schedules: ${schedules.length}");
         _updatePlayingStatus();
-        // Get.snackbar('Success', 'Schedule deleted successfully',
+        // AppSnackBar.adaptive('Success', 'Schedule deleted successfully',
         //     duration: Duration(seconds: 2));
 
         // Reload schedules from API to ensure consistency
@@ -1093,7 +1106,7 @@ class AudioSchedulerController extends GetxController {
         Get.back();
       }
       debugPrint("Error removing schedule: $e");
-      Get.snackbar('Error', 'Failed to delete schedule');
+      AppSnackBar.adaptive('Error', 'Failed to delete schedule');
     }
   }
 
@@ -1177,14 +1190,15 @@ class AudioSchedulerController extends GetxController {
               // pauseAllSchedulesLocal();
             }
 
-            Get.snackbar('Success',
+            AppSnackBar.adaptive('Success',
                 newActiveState ? 'Schedules activated' : 'Schedules paused');
           } else {
-            Get.snackbar('Error', 'Failed to update schedule status on server');
+            AppSnackBar.adaptive(
+                'Error', 'Failed to update schedule status on server');
           }
         } catch (e) {
           debugPrint("Error toggling play/pause: $e");
-          Get.snackbar('Error', 'Failed to update schedule status');
+          AppSnackBar.adaptive('Error', 'Failed to update schedule status');
         } finally {
           isUpdatingPlayStatus.value = false;
         }
@@ -1212,14 +1226,14 @@ class AudioSchedulerController extends GetxController {
         isPaused.value = true;
         isPlaying.value = false;
         // pauseAllSchedulesLocal();
-        Get.snackbar('Success', 'All schedules paused');
+        AppSnackBar.adaptive('Success', 'All schedules paused');
       } else {
-        Get.snackbar('Error', 'Failed to pause schedules on server');
+        AppSnackBar.adaptive('Error', 'Failed to pause schedules on server');
       }
     } catch (e) {
       Get.back(); // Close loading dialog
       debugPrint("Error pausing schedules: $e");
-      Get.snackbar('Error', 'Failed to pause schedules');
+      AppSnackBar.adaptive('Error', 'Failed to pause schedules');
     }
   }
 
@@ -1241,14 +1255,14 @@ class AudioSchedulerController extends GetxController {
         isPaused.value = false;
         isPlaying.value = true;
         // resumeAllSchedulesLocal();
-        Get.snackbar('Success', 'All schedules resumed');
+        AppSnackBar.adaptive('Success', 'All schedules resumed');
       } else {
-        Get.snackbar('Error', 'Failed to resume schedules on server');
+        AppSnackBar.adaptive('Error', 'Failed to resume schedules on server');
       }
     } catch (e) {
       Get.back(); // Close loading dialog
       debugPrint("Error resuming schedules: $e");
-      Get.snackbar('Error', 'Failed to resume schedules');
+      AppSnackBar.adaptive('Error', 'Failed to resume schedules');
     }
   }
 
@@ -1270,14 +1284,14 @@ class AudioSchedulerController extends GetxController {
         isPaused.value = false;
         isPlaying.value = true;
         // startAllSchedulesLocal();
-        Get.snackbar('Success', 'All schedules started');
+        AppSnackBar.adaptive('Success', 'All schedules started');
       } else {
-        Get.snackbar('Error', 'Failed to start schedules on server');
+        AppSnackBar.adaptive('Error', 'Failed to start schedules on server');
       }
     } catch (e) {
       Get.back(); // Close loading dialog
       debugPrint("Error starting schedules: $e");
-      Get.snackbar('Error', 'Failed to start schedules');
+      AppSnackBar.adaptive('Error', 'Failed to start schedules');
     }
   }
 
@@ -1495,7 +1509,7 @@ class AudioSchedulerController extends GetxController {
       debugPrint("🎵 Audio played successfully: $soundName");
     } catch (e) {
       debugPrint("❌ Audio play error: $e");
-      Get.snackbar('Error', 'Failed to play audio: $soundName');
+      AppSnackBar.adaptive('Error', 'Failed to play audio: $soundName');
     }
   }
 
